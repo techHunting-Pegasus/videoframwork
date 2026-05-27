@@ -26,6 +26,30 @@ public struct CustomVideoQualityOption: Equatable {
     )
 }
 
+public enum CustomVideoPlayerControlButton: CaseIterable, Hashable {
+    case backward
+    case playPause
+    case forward
+    case cc
+    case settings
+    case expand
+    case videoScale
+    case liveStatus
+}
+
+public enum CustomVideoPlayerIconRole: CaseIterable, Hashable {
+    case backward
+    case play
+    case pause
+    case forward
+    case cc
+    case settings
+    case expand
+    case collapse
+    case videoScaleAspect
+    case videoScaleAspectFill
+}
+
 public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     public override class var layerClass: AnyClass {
         AVPlayerLayer.self
@@ -99,6 +123,10 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     private let playbackSpeedOptions: [Float] = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0]
     private var isApplyingPlaybackSpeed = false
     private var qualityFetchToken = UUID()
+    private var customControlIcons: [CustomVideoPlayerIconRole: UIImage] = [:]
+    private var customControlTintColors: [CustomVideoPlayerControlButton: UIColor] = [:]
+    private var liveAtEdgeTitleColor: UIColor = .systemRed
+    private var liveGoLiveTitleColor: UIColor = .white
     private var controlsAutoHideWorkItem: DispatchWorkItem?
     private var isControlsVisible = true
     private let controlsAutoHideDelay: TimeInterval = 5
@@ -150,6 +178,69 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
         } else {
             DispatchQueue.main.async(execute: work)
         }
+    }
+
+    private func defaultControlImage(for role: CustomVideoPlayerIconRole) -> UIImage? {
+        switch role {
+        case .backward:
+            return UIImage(systemName: "gobackward.10")
+        case .play:
+            return UIImage(systemName: "play.fill")
+        case .pause:
+            return UIImage(systemName: "pause.fill")
+        case .forward:
+            return UIImage(systemName: "goforward.10")
+        case .cc:
+            return UIImage(systemName: "captions.bubble")
+        case .settings:
+            return UIImage(systemName: "slider.horizontal.3")
+        case .expand:
+            return UIImage(systemName: "arrow.up.left.and.arrow.down.right")
+        case .collapse:
+            return UIImage(systemName: "arrow.down.right.and.arrow.up.left")
+        case .videoScaleAspect:
+            return UIImage(systemName: "aspectratio")
+        case .videoScaleAspectFill:
+            return UIImage(systemName: "aspectratio.fill")
+        }
+    }
+
+    private func resolvedControlImage(for role: CustomVideoPlayerIconRole) -> UIImage? {
+        customControlIcons[role] ?? defaultControlImage(for: role)
+    }
+
+    private func defaultTintColor(for button: CustomVideoPlayerControlButton) -> UIColor {
+        switch button {
+        case .backward, .playPause, .forward, .cc, .settings, .expand, .videoScale:
+            return .white
+        case .liveStatus:
+            return .systemRed
+        }
+    }
+
+    private func resolvedTintColor(for button: CustomVideoPlayerControlButton) -> UIColor {
+        customControlTintColors[button] ?? defaultTintColor(for: button)
+    }
+
+    private func applyControlIcons() {
+        backwardButton.setImage(resolvedControlImage(for: .backward), for: .normal)
+        forwardButton.setImage(resolvedControlImage(for: .forward), for: .normal)
+        ccButton.setImage(resolvedControlImage(for: .cc), for: .normal)
+        settingsButton.setImage(resolvedControlImage(for: .settings), for: .normal)
+        updatePlayPauseIcon()
+        updateExpandButtonIcon()
+        updateVideoScaleButtonIcon()
+    }
+
+    private func applyControlTintColors() {
+        backwardButton.tintColor = resolvedTintColor(for: .backward)
+        playPauseButton.tintColor = resolvedTintColor(for: .playPause)
+        forwardButton.tintColor = resolvedTintColor(for: .forward)
+        ccButton.tintColor = resolvedTintColor(for: .cc)
+        settingsButton.tintColor = resolvedTintColor(for: .settings)
+        expandButton.tintColor = resolvedTintColor(for: .expand)
+        videoScaleButton.tintColor = resolvedTintColor(for: .videoScale)
+        liveStatusButton.tintColor = resolvedTintColor(for: .liveStatus)
     }
 
     public override func didMoveToWindow() {
@@ -255,6 +346,42 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
         }
 
         updateLandscapeCustomButtonsVisibility()
+    }
+
+    public func setControlImage(_ image: UIImage?, for role: CustomVideoPlayerIconRole) {
+        if let image {
+            customControlIcons[role] = image
+        } else {
+            customControlIcons.removeValue(forKey: role)
+        }
+        applyControlIcons()
+    }
+
+    public func setControlTintColor(_ color: UIColor?, for button: CustomVideoPlayerControlButton) {
+        if button == .liveStatus {
+            if let color {
+                liveAtEdgeTitleColor = color
+                liveGoLiveTitleColor = color
+            } else {
+                liveAtEdgeTitleColor = .systemRed
+                liveGoLiveTitleColor = .white
+            }
+            updateLiveStatusButton()
+            return
+        }
+
+        if let color {
+            customControlTintColors[button] = color
+        } else {
+            customControlTintColors.removeValue(forKey: button)
+        }
+        applyControlTintColors()
+    }
+
+    public func setLiveStatusTitleColors(atLiveEdge: UIColor, goLive: UIColor) {
+        liveAtEdgeTitleColor = atLiveEdge
+        liveGoLiveTitleColor = goLive
+        updateLiveStatusButton()
     }
 
     private func setupUI() {
@@ -381,13 +508,8 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
             videoScaleButton.trailingAnchor.constraint(equalTo: safeGuide.trailingAnchor, constant: -12)
         ])
 
-        backwardButton.setImage(UIImage(systemName: "gobackward.10"), for: .normal)
-        playPauseButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
-        forwardButton.setImage(UIImage(systemName: "goforward.10"), for: .normal)
-        ccButton.setImage(UIImage(systemName: "captions.bubble"), for: .normal)
-        settingsButton.setImage(UIImage(systemName: "slider.horizontal.3"), for: .normal)
-        expandButton.setImage(UIImage(systemName: "arrow.up.left.and.arrow.down.right"), for: .normal)
-        videoScaleButton.setImage(UIImage(systemName: "aspectratio.fill"), for: .normal)
+        applyControlIcons()
+        applyControlTintColors()
 
         backwardButton.addTarget(self, action: #selector(didTapBackward), for: .touchUpInside)
         playPauseButton.addTarget(self, action: #selector(didTapPlayPause), for: .touchUpInside)
@@ -437,8 +559,8 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("LIVE", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 12, weight: .semibold)
-        button.setTitleColor(.systemRed, for: .normal)
-        button.setTitleColor(.systemRed, for: .disabled)
+        button.setTitleColor(liveAtEdgeTitleColor, for: .normal)
+        button.setTitleColor(liveAtEdgeTitleColor, for: .disabled)
         button.backgroundColor = .clear
         button.contentEdgeInsets = .zero
     }
@@ -971,14 +1093,17 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
             liveStatusButton.isHidden = false
             liveStatusButton.isEnabled = false
             liveStatusButton.setTitle("LIVE", for: .normal)
-            liveStatusButton.setTitleColor(.systemRed, for: .normal)
+            liveStatusButton.setTitleColor(liveAtEdgeTitleColor, for: .normal)
+            liveStatusButton.setTitleColor(liveAtEdgeTitleColor, for: .disabled)
             liveStatusButton.alpha = 1
         case .liveDVR:
             liveStatusButton.isHidden = false
             let atLiveEdge = isAtLiveEdge()
             liveStatusButton.isEnabled = !atLiveEdge
             liveStatusButton.setTitle(atLiveEdge ? "LIVE" : "GO LIVE", for: .normal)
-            liveStatusButton.setTitleColor(atLiveEdge ? .systemRed : .white, for: .normal)
+            let color = atLiveEdge ? liveAtEdgeTitleColor : liveGoLiveTitleColor
+            liveStatusButton.setTitleColor(color, for: .normal)
+            liveStatusButton.setTitleColor(color, for: .disabled)
             liveStatusButton.alpha = 1
         }
     }
@@ -1046,13 +1171,8 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     }
 
     private func updatePlayPauseIcon() {
-        let imageName: String
-        if player?.timeControlStatus == .playing {
-            imageName = "pause.fill"
-        } else {
-            imageName = "play.fill"
-        }
-        playPauseButton.setImage(UIImage(systemName: imageName), for: .normal)
+        let role: CustomVideoPlayerIconRole = (player?.timeControlStatus == .playing) ? .pause : .play
+        playPauseButton.setImage(resolvedControlImage(for: role), for: .normal)
     }
 
     private func handlePlaybackStateChange() {
@@ -1565,15 +1685,13 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     }
 
     private func updateExpandButtonIcon() {
-        let iconName = isExpandedFullscreen
-            ? "arrow.down.right.and.arrow.up.left"
-            : "arrow.up.left.and.arrow.down.right"
-        expandButton.setImage(UIImage(systemName: iconName), for: .normal)
+        let role: CustomVideoPlayerIconRole = isExpandedFullscreen ? .collapse : .expand
+        expandButton.setImage(resolvedControlImage(for: role), for: .normal)
     }
 
     private func updateVideoScaleButtonIcon() {
-        let iconName = (videoGravity == .resizeAspectFill) ? "aspectratio" : "aspectratio.fill"
-        videoScaleButton.setImage(UIImage(systemName: iconName), for: .normal)
+        let role: CustomVideoPlayerIconRole = (videoGravity == .resizeAspectFill) ? .videoScaleAspect : .videoScaleAspectFill
+        videoScaleButton.setImage(resolvedControlImage(for: role), for: .normal)
     }
 
     private func nearestViewController() -> UIViewController? {

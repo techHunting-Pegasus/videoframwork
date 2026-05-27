@@ -22,6 +22,7 @@ final class ViewController: UIViewController {
         view.translatesAutoresizingMaskIntoConstraints = false
         // Empty means stream-derived dynamic quality options.
         view.qualityOptions = []
+        configurePlayerCustomization(view)
         return view
     }()
 
@@ -67,6 +68,49 @@ final class ViewController: UIViewController {
             infoLabel.leadingAnchor.constraint(equalTo: safe.leadingAnchor, constant: 16),
             infoLabel.trailingAnchor.constraint(equalTo: safe.trailingAnchor, constant: -16)
         ])
+        
     }
+    private func configurePlayerCustomization(_ view: CustomVideoPlayerView) {
+           // 1) ICONS (system + asset both supported)
+           view.setControlImage(UIImage(systemName: "gobackward.10"), for: .backward)
+           view.setControlImage(UIImage(named: "ic_play_custom")?.withRenderingMode(.alwaysTemplate), for: .play)
+           view.setControlImage(UIImage(named: "ic_pause_custom")?.withRenderingMode(.alwaysTemplate), for: .pause)
+           view.setControlImage(UIImage(systemName: "goforward.10"), for: .forward)
+           view.setControlImage(UIImage(systemName: "captions.bubble.fill"), for: .cc)
+           view.setControlImage(UIImage(systemName: "gearshape.fill"), for: .settings)
+           view.setControlImage(UIImage(systemName: "arrow.up.left.and.arrow.down.right"), for: .expand)
+           view.setControlImage(UIImage(systemName: "arrow.down.right.and.arrow.up.left"), for: .collapse)
+           view.setControlImage(UIImage(systemName: "aspectratio.fill"), for: .videoScaleAspectFill)
+           view.setControlImage(UIImage(systemName: "aspectratio"), for: .videoScaleAspect)
+
+           // 2) COLORS
+           view.setControlTintColor(.white, for: .backward)
+           view.setControlTintColor(.systemYellow, for: .playPause)
+           view.setControlTintColor(.white, for: .forward)
+           view.setControlTintColor(.white, for: .cc)
+           view.setControlTintColor(.white, for: .settings)
+           view.setControlTintColor(.white, for: .expand)
+           view.setControlTintColor(.white, for: .videoScale)
+
+           // LIVE text colors
+           view.setLiveStatusTitleColors(atLiveEdge: .systemRed, goLive: .systemOrange)
+
+           // 3) Optional landscape-only custom buttons (0/1/2...)
+           let bookmark = UIButton(type: .system)
+           bookmark.setImage(UIImage(systemName: "bookmark.fill"), for: .normal)
+           bookmark.tintColor = .white
+           bookmark.addAction(UIAction { _ in
+               print("Bookmark tapped")
+           }, for: .touchUpInside)
+
+           let share = UIButton(type: .system)
+           share.setImage(UIImage(systemName: "square.and.arrow.up"), for: .normal)
+           share.tintColor = .white
+           share.addAction(UIAction { _ in
+               print("Share tapped")
+           }, for: .touchUpInside)
+
+           view.setLandscapeCustomButtons([bookmark, share]) // [] or [bookmark] also valid
+       }
 
 }
