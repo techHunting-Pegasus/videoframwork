@@ -1,0 +1,16 @@
+{
+  "source": "/Users/ishpreetsingh/Desktop/CustomVideoplyer/swiftUiexample/ContentView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "SwiftUI Player Demo",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 222
+        }
+      }
+    ]
+  },
+  "version": 1
+}

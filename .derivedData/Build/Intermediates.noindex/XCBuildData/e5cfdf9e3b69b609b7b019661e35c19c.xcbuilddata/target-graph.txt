@@ -1,0 +1,4 @@
+Target dependency graph (2 targets)
+Target 'swiftUiexample' in project 'CustomVideoplyer'
+➜ Explicit dependency on target 'CustomVideoplyer' in project 'CustomVideoplyer'
+Target 'CustomVideoplyer' in project 'CustomVideoplyer' (no dependencies)

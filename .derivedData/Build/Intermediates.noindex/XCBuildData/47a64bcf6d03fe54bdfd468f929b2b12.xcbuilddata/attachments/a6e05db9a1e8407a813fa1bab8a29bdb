@@ -1,0 +1,39 @@
+{
+  "" : {
+    "diagnostics" : "/Users/ishpreetsingh/Desktop/CustomVideoplyer/.derivedData/Build/Intermediates.noindex/CustomVideoplyer.build/Debug-iphoneos/CustomVideoplyer.build/Objects-normal/arm64/CustomVideoplyer-primary.dia",
+    "emit-module-dependencies" : "/Users/ishpreetsingh/Desktop/CustomVideoplyer/.derivedData/Build/Intermediates.noindex/CustomVideoplyer.build/Debug-iphoneos/CustomVideoplyer.build/Objects-normal/arm64/CustomVideoplyer-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/ishpreetsingh/Desktop/CustomVideoplyer/.derivedData/Build/Intermediates.noindex/CustomVideoplyer.build/Debug-iphoneos/CustomVideoplyer.build/Objects-normal/arm64/CustomVideoplyer-primary-emit-module.dia",
+    "pch" : "/Users/ishpreetsingh/Desktop/CustomVideoplyer/.derivedData/Build/Intermediates.noindex/CustomVideoplyer.build/Debug-iphoneos/CustomVideoplyer.build/Objects-normal/arm64/CustomVideoplyer-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/ishpreetsingh/Desktop/CustomVideoplyer/.derivedData/Build/Intermediates.noindex/CustomVideoplyer.build/Debug-iphoneos/CustomVideoplyer.build/Objects-normal/arm64/CustomVideoplyer-primary.swiftdeps"
+  },
+  "/Users/ishpreetsingh/Desktop/CustomVideoplyer/CustomVideoplyer/CustomVideoPlayerSwiftUIView.swift" : {
+    "const-values" : "/Users/ishpreetsingh/Desktop/CustomVideoplyer/.derivedData/Build/Intermediates.noindex/CustomVideoplyer.build/Debug-iphoneos/CustomVideoplyer.build/Objects-normal/arm64/CustomVideoPlayerSwiftUIView.swiftconstvalues",
+    "dependencies" : "/Users/ishpreetsingh/Desktop/CustomVideoplyer/.derivedData/Build/Intermediates.noindex/CustomVideoplyer.build/Debug-iphoneos/CustomVideoplyer.build/Objects-normal/arm64/CustomVideoPlayerSwiftUIView.d",
+    "diagnostics" : "/Users/ishpreetsingh/Desktop/CustomVideoplyer/.derivedData/Build/Intermediates.noindex/CustomVideoplyer.build/Debug-iphoneos/CustomVideoplyer.build/Objects-normal/arm64/CustomVideoPlayerSwiftUIView.dia",
+    "index-unit-output-path" : "/CustomVideoplyer.build/Debug-iphoneos/CustomVideoplyer.build/Objects-normal/arm64/CustomVideoPlayerSwiftUIView.o",
+    "llvm-bc" : "/Users/ishpreetsingh/Desktop/CustomVideoplyer/.derivedData/Build/Intermediates.noindex/CustomVideoplyer.build/Debug-iphoneos/CustomVideoplyer.build/Objects-normal/arm64/CustomVideoPlayerSwiftUIView.bc",
+    "object" : "/Users/ishpreetsingh/Desktop/CustomVideoplyer/.derivedData/Build/Intermediates.noindex/CustomVideoplyer.build/Debug-iphoneos/CustomVideoplyer.build/Objects-normal/arm64/CustomVideoPlayerSwiftUIView.o",
+    "swift-dependencies" : "/Users/ishpreetsingh/Desktop/CustomVideoplyer/.derivedData/Build/Intermediates.noindex/CustomVideoplyer.build/Debug-iphoneos/CustomVideoplyer.build/Objects-normal/arm64/CustomVideoPlayerSwiftUIView.swiftdeps",
+    "swiftmodule" : "/Users/ishpreetsingh/Desktop/CustomVideoplyer/.derivedData/Build/Intermediates.noindex/CustomVideoplyer.build/Debug-iphoneos/CustomVideoplyer.build/Objects-normal/arm64/CustomVideoPlayerSwiftUIView~partial.swiftmodule"
+  },
+  "/Users/ishpreetsingh/Desktop/CustomVideoplyer/CustomVideoplyer/CustomVideoPlayerView.swift" : {
+    "const-values" : "/Users/ishpreetsingh/Desktop/CustomVideoplyer/.derivedData/Build/Intermediates.noindex/CustomVideoplyer.build/Debug-iphoneos/CustomVideoplyer.build/Objects-normal/arm64/CustomVideoPlayerView.swiftconstvalues",
+    "dependencies" : "/Users/ishpreetsingh/Desktop/CustomVideoplyer/.derivedData/Build/Intermediates.noindex/CustomVideoplyer.build/Debug-iphoneos/CustomVideoplyer.build/Objects-normal/arm64/CustomVideoPlayerView.d",
+    "diagnostics" : "/Users/ishpreetsingh/Desktop/CustomVideoplyer/.derivedData/Build/Intermediates.noindex/CustomVideoplyer.build/Debug-iphoneos/CustomVideoplyer.build/Objects-normal/arm64/CustomVideoPlayerView.dia",
+    "index-unit-output-path" : "/CustomVideoplyer.build/Debug-iphoneos/CustomVideoplyer.build/Objects-normal/arm64/CustomVideoPlayerView.o",
+    "llvm-bc" : "/Users/ishpreetsingh/Desktop/CustomVideoplyer/.derivedData/Build/Intermediates.noindex/CustomVideoplyer.build/Debug-iphoneos/CustomVideoplyer.build/Objects-normal/arm64/CustomVideoPlayerView.bc",
+    "object" : "/Users/ishpreetsingh/Desktop/CustomVideoplyer/.derivedData/Build/Intermediates.noindex/CustomVideoplyer.build/Debug-iphoneos/CustomVideoplyer.build/Objects-normal/arm64/CustomVideoPlayerView.o",
+    "swift-dependencies" : "/Users/ishpreetsingh/Desktop/CustomVideoplyer/.derivedData/Build/Intermediates.noindex/CustomVideoplyer.build/Debug-iphoneos/CustomVideoplyer.build/Objects-normal/arm64/CustomVideoPlayerView.swiftdeps",
+    "swiftmodule" : "/Users/ishpreetsingh/Desktop/CustomVideoplyer/.derivedData/Build/Intermediates.noindex/CustomVideoplyer.build/Debug-iphoneos/CustomVideoplyer.build/Objects-normal/arm64/CustomVideoPlayerView~partial.swiftmodule"
+  },
+  "/Users/ishpreetsingh/Desktop/CustomVideoplyer/CustomVideoplyer/CustomVideoplyer.swift" : {
+    "const-values" : "/Users/ishpreetsingh/Desktop/CustomVideoplyer/.derivedData/Build/Intermediates.noindex/CustomVideoplyer.build/Debug-iphoneos/CustomVideoplyer.build/Objects-normal/arm64/CustomVideoplyer-48686e8d16a476322c89601c4fbff573.swiftconstvalues",
+    "dependencies" : "/Users/ishpreetsingh/Desktop/CustomVideoplyer/.derivedData/Build/Intermediates.noindex/CustomVideoplyer.build/Debug-iphoneos/CustomVideoplyer.build/Objects-normal/arm64/CustomVideoplyer-48686e8d16a476322c89601c4fbff573.d",
+    "diagnostics" : "/Users/ishpreetsingh/Desktop/CustomVideoplyer/.derivedData/Build/Intermediates.noindex/CustomVideoplyer.build/Debug-iphoneos/CustomVideoplyer.build/Objects-normal/arm64/CustomVideoplyer-48686e8d16a476322c89601c4fbff573.dia",
+    "index-unit-output-path" : "/CustomVideoplyer.build/Debug-iphoneos/CustomVideoplyer.build/Objects-normal/arm64/CustomVideoplyer-48686e8d16a476322c89601c4fbff573.o",
+    "llvm-bc" : "/Users/ishpreetsingh/Desktop/CustomVideoplyer/.derivedData/Build/Intermediates.noindex/CustomVideoplyer.build/Debug-iphoneos/CustomVideoplyer.build/Objects-normal/arm64/CustomVideoplyer-48686e8d16a476322c89601c4fbff573.bc",
+    "object" : "/Users/ishpreetsingh/Desktop/CustomVideoplyer/.derivedData/Build/Intermediates.noindex/CustomVideoplyer.build/Debug-iphoneos/CustomVideoplyer.build/Objects-normal/arm64/CustomVideoplyer-48686e8d16a476322c89601c4fbff573.o",
+    "swift-dependencies" : "/Users/ishpreetsingh/Desktop/CustomVideoplyer/.derivedData/Build/Intermediates.noindex/CustomVideoplyer.build/Debug-iphoneos/CustomVideoplyer.build/Objects-normal/arm64/CustomVideoplyer-48686e8d16a476322c89601c4fbff573.swiftdeps",
+    "swiftmodule" : "/Users/ishpreetsingh/Desktop/CustomVideoplyer/.derivedData/Build/Intermediates.noindex/CustomVideoplyer.build/Debug-iphoneos/CustomVideoplyer.build/Objects-normal/arm64/CustomVideoplyer-48686e8d16a476322c89601c4fbff573~partial.swiftmodule"
+  }
+}
