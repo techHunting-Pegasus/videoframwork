@@ -91,6 +91,7 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     private let secondaryStackView = UIStackView()
     private let landscapeCustomButtonsStackView = UIStackView()
     private let centerControlsStackView = UIStackView()
+    private let titleLabel = UILabel()
     private let loadingStackView = UIStackView()
     private let loadingIndicator = UIActivityIndicatorView(style: .large)
     private let controlsGradientLayer = CAGradientLayer()
@@ -127,6 +128,11 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     private var customControlTintColors: [CustomVideoPlayerControlButton: UIColor] = [:]
     private var liveAtEdgeTitleColor: UIColor = .systemRed
     private var liveGoLiveTitleColor: UIColor = .white
+    private var playerTitleText: String?
+    private let defaultPlayerTitleTextColor: UIColor = .white
+    private var playerTitleTextColor: UIColor = .white
+    private let defaultPlayerTitleFont: UIFont = .systemFont(ofSize: 15, weight: .semibold)
+    private var playerTitleFont: UIFont = .systemFont(ofSize: 15, weight: .semibold)
     private let defaultControlsGradientTopColor: UIColor = .clear
     private let defaultControlsGradientBottomColor: UIColor = UIColor.black.withAlphaComponent(0.88)
     private var controlsAutoHideWorkItem: DispatchWorkItem?
@@ -388,6 +394,27 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
         updateLiveStatusButton()
     }
 
+    public func setPlayerTitle(_ title: String?) {
+        let normalized = title?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let resolvedTitle = (normalized?.isEmpty == false) ? normalized : nil
+
+        playerTitleText = resolvedTitle
+        titleLabel.text = resolvedTitle
+        let shouldShow = isControlsVisible && !isBuffering() && resolvedTitle != nil
+        setView(titleLabel, visible: shouldShow, animated: false)
+    }
+
+    public func setPlayerTitleTextColor(_ color: UIColor?) {
+        playerTitleTextColor = color ?? defaultPlayerTitleTextColor
+        titleLabel.textColor = playerTitleTextColor
+    }
+
+    public func setPlayerTitleFont(_ font: UIFont?) {
+        playerTitleFont = font ?? defaultPlayerTitleFont
+        titleLabel.font = playerTitleFont
+    }
+
     public func setControlsGradientColors(top: UIColor?, bottom: UIColor?) {
         let resolvedTop = top ?? defaultControlsGradientTopColor
         let resolvedBottom = bottom ?? defaultControlsGradientBottomColor
@@ -427,6 +454,17 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
         centerControlsStackView.axis = .horizontal
         centerControlsStackView.alignment = .center
         centerControlsStackView.spacing = 12
+
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        titleLabel.numberOfLines = 2
+        titleLabel.lineBreakMode = .byTruncatingTail
+        titleLabel.font = playerTitleFont
+        titleLabel.textColor = playerTitleTextColor
+        titleLabel.textAlignment = .left
+        titleLabel.isUserInteractionEnabled = false
+        titleLabel.isHidden = true
+        titleLabel.alpha = 0
+        addSubview(titleLabel)
 
         styleCenterSeekButton(backwardButton)
         styleCenterPlayPauseButton(playPauseButton)
@@ -510,6 +548,10 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
 
             centerControlsStackView.centerXAnchor.constraint(equalTo: centerXAnchor),
             centerControlsStackView.centerYAnchor.constraint(equalTo: centerYAnchor),
+
+            titleLabel.topAnchor.constraint(equalTo: safeGuide.topAnchor, constant: 12),
+            titleLabel.leadingAnchor.constraint(equalTo: safeGuide.leadingAnchor, constant: 12),
+            titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: safeGuide.trailingAnchor, constant: -12),
 
             loadingStackView.centerXAnchor.constraint(equalTo: centerXAnchor),
             loadingStackView.centerYAnchor.constraint(equalTo: centerYAnchor),
@@ -1285,6 +1327,7 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     private func setControlsContentVisible(_ visible: Bool, animated: Bool) {
         setView(controlsContainer, visible: visible, animated: animated)
         setView(centerControlsStackView, visible: visible, animated: animated)
+        setView(titleLabel, visible: visible && playerTitleText != nil, animated: animated)
         setView(videoScaleButton, visible: visible && isExpandedFullscreen, animated: animated)
     }
 

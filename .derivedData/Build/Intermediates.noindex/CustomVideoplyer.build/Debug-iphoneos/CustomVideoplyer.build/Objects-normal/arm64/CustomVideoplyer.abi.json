@@ -36,7 +36,7 @@
           {
             "kind": "Constructor",
             "name": "init",
-            "printedName": "init(player:videoGravity:qualityOptions:landscapeCustomButtons:controlIcons:controlTintColors:liveAtEdgeColor:liveGoLiveColor:controlsGradientTopColor:controlsGradientBottomColor:onExpandTapped:onStreamURLRefreshRequested:)",
+            "printedName": "init(player:videoGravity:qualityOptions:landscapeCustomButtons:controlIcons:controlTintColors:liveAtEdgeColor:liveGoLiveColor:playerTitle:playerTitleColor:playerTitleFont:controlsGradientTopColor:controlsGradientBottomColor:onExpandTapped:onStreamURLRefreshRequested:)",
             "children": [
               {
                 "kind": "TypeNominal",
@@ -194,6 +194,51 @@
               {
                 "kind": "TypeNominal",
                 "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "UIKit.UIColor?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UIColor",
+                    "printedName": "UIKit.UIColor",
+                    "usr": "c:objc(cs)UIColor"
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "UIKit.UIFont?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UIFont",
+                    "printedName": "UIKit.UIFont",
+                    "usr": "c:objc(cs)UIFont"
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
                 "printedName": "UIKit.UIColor?",
                 "children": [
                   {
@@ -296,8 +341,8 @@
               }
             ],
             "declKind": "Constructor",
-            "usr": "s:16CustomVideoplyer0A22VideoPlayerSwiftUIViewV6player12videoGravity14qualityOptions09landscapeA7Buttons12controlIcons0N10TintColors15liveAtEdgeColor0r6GoLiveU0019controlsGradientTopU00xy6BottomU014onExpandTapped27onStreamURLRefreshRequestedACSo8AVPlayerC_So07AVLayercI0aSayAA0aC13QualityOptionVGSgSaySo8UIButtonCGSgSDyAA0acD8IconRoleOSo7UIImageCGSgSDyAA0acD13ControlButtonOSo7UIColorCGSgA9_SgA12_A12_A12_yycSgyy10Foundation3URLVSgccSgtcfc",
-            "mangledName": "$s16CustomVideoplyer0A22VideoPlayerSwiftUIViewV6player12videoGravity14qualityOptions09landscapeA7Buttons12controlIcons0N10TintColors15liveAtEdgeColor0r6GoLiveU0019controlsGradientTopU00xy6BottomU014onExpandTapped27onStreamURLRefreshRequestedACSo8AVPlayerC_So07AVLayercI0aSayAA0aC13QualityOptionVGSgSaySo8UIButtonCGSgSDyAA0acD8IconRoleOSo7UIImageCGSgSDyAA0acD13ControlButtonOSo7UIColorCGSgA9_SgA12_A12_A12_yycSgyy10Foundation3URLVSgccSgtcfc",
+            "usr": "s:16CustomVideoplyer0A22VideoPlayerSwiftUIViewV6player12videoGravity14qualityOptions09landscapeA7Buttons12controlIcons0N10TintColors15liveAtEdgeColor0r6GoLiveU00G5Title0gxU00gX4Font019controlsGradientTopU00z14GradientBottomU014onExpandTapped27onStreamURLRefreshRequestedACSo8AVPlayerC_So07AVLayercI0aSayAA0aC13QualityOptionVGSgSaySo8UIButtonCGSgSDyAA0acD8IconRoleOSo7UIImageCGSgSDyAA0acD13ControlButtonOSo7UIColorCGSgA12_SgA15_SSSgA15_So6UIFontCSgA15_A15_yycSgyy10Foundation3URLVSgccSgtcfc",
+            "mangledName": "$s16CustomVideoplyer0A22VideoPlayerSwiftUIViewV6player12videoGravity14qualityOptions09landscapeA7Buttons12controlIcons0N10TintColors15liveAtEdgeColor0r6GoLiveU00G5Title0gxU00gX4Font019controlsGradientTopU00z14GradientBottomU014onExpandTapped27onStreamURLRefreshRequestedACSo8AVPlayerC_So07AVLayercI0aSayAA0aC13QualityOptionVGSgSaySo8UIButtonCGSgSDyAA0acD8IconRoleOSo7UIImageCGSgSDyAA0acD13ControlButtonOSo7UIColorCGSgA12_SgA15_SSSgA15_So6UIFontCSgA15_A15_yycSgyy10Foundation3URLVSgccSgtcfc",
             "moduleName": "CustomVideoplyer",
             "declAttributes": [
               "Preconcurrency",
@@ -3248,6 +3293,117 @@
           },
           {
             "kind": "Function",
+            "name": "setPlayerTitle",
+            "printedName": "setPlayerTitle(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:16CustomVideoplyer0A15VideoPlayerViewC03setD5TitleyySSSgF",
+            "mangledName": "$s16CustomVideoplyer0A15VideoPlayerViewC03setD5TitleyySSSgF",
+            "moduleName": "CustomVideoplyer",
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom",
+              "Final",
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "setPlayerTitleTextColor",
+            "printedName": "setPlayerTitleTextColor(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "UIKit.UIColor?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UIColor",
+                    "printedName": "UIKit.UIColor",
+                    "usr": "c:objc(cs)UIColor"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:16CustomVideoplyer0A15VideoPlayerViewC03setD14TitleTextColoryySo7UIColorCSgF",
+            "mangledName": "$s16CustomVideoplyer0A15VideoPlayerViewC03setD14TitleTextColoryySo7UIColorCSgF",
+            "moduleName": "CustomVideoplyer",
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom",
+              "Final",
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "setPlayerTitleFont",
+            "printedName": "setPlayerTitleFont(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "UIKit.UIFont?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UIFont",
+                    "printedName": "UIKit.UIFont",
+                    "usr": "c:objc(cs)UIFont"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:16CustomVideoplyer0A15VideoPlayerViewC03setD9TitleFontyySo6UIFontCSgF",
+            "mangledName": "$s16CustomVideoplyer0A15VideoPlayerViewC03setD9TitleFontyySo6UIFontCSgF",
+            "moduleName": "CustomVideoplyer",
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom",
+              "Final",
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
             "name": "setControlsGradientColors",
             "printedName": "setControlsGradientColors(top:bottom:)",
             "children": [
@@ -3520,196 +3676,210 @@
     {
       "filePath": "\/Users\/ishpreetsingh\/Desktop\/CustomVideoplyer\/CustomVideoplyer\/CustomVideoPlayerView.swift",
       "kind": "BooleanLiteral",
-      "offset": 3253,
+      "offset": 3292,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/ishpreetsingh\/Desktop\/CustomVideoplyer\/CustomVideoplyer\/CustomVideoPlayerView.swift",
       "kind": "Array",
-      "offset": 3938,
+      "offset": 3977,
       "length": 32,
       "value": "[0.5, 0.75, 1.0, 1.25, 1.5, 2.0]"
     },
     {
       "filePath": "\/Users\/ishpreetsingh\/Desktop\/CustomVideoplyer\/CustomVideoplyer\/CustomVideoPlayerView.swift",
       "kind": "BooleanLiteral",
-      "offset": 4013,
+      "offset": 4052,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/ishpreetsingh\/Desktop\/CustomVideoplyer\/CustomVideoplyer\/CustomVideoPlayerView.swift",
       "kind": "Dictionary",
-      "offset": 4137,
+      "offset": 4176,
       "length": 3,
       "value": "[]"
     },
     {
       "filePath": "\/Users\/ishpreetsingh\/Desktop\/CustomVideoplyer\/CustomVideoplyer\/CustomVideoPlayerView.swift",
       "kind": "Dictionary",
-      "offset": 4226,
+      "offset": 4265,
       "length": 3,
       "value": "[]"
     },
     {
       "filePath": "\/Users\/ishpreetsingh\/Desktop\/CustomVideoplyer\/CustomVideoplyer\/CustomVideoPlayerView.swift",
+      "kind": "IntegerLiteral",
+      "offset": 4610,
+      "length": 2,
+      "value": "15"
+    },
+    {
+      "filePath": "\/Users\/ishpreetsingh\/Desktop\/CustomVideoplyer\/CustomVideoplyer\/CustomVideoPlayerView.swift",
+      "kind": "IntegerLiteral",
+      "offset": 4695,
+      "length": 2,
+      "value": "15"
+    },
+    {
+      "filePath": "\/Users\/ishpreetsingh\/Desktop\/CustomVideoplyer\/CustomVideoplyer\/CustomVideoPlayerView.swift",
       "kind": "FloatLiteral",
-      "offset": 4505,
+      "offset": 4879,
       "length": 4,
       "value": "0.88"
     },
     {
       "filePath": "\/Users\/ishpreetsingh\/Desktop\/CustomVideoplyer\/CustomVideoplyer\/CustomVideoPlayerView.swift",
       "kind": "BooleanLiteral",
-      "offset": 4607,
+      "offset": 4981,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/ishpreetsingh\/Desktop\/CustomVideoplyer\/CustomVideoplyer\/CustomVideoPlayerView.swift",
       "kind": "IntegerLiteral",
-      "offset": 4666,
+      "offset": 5040,
       "length": 1,
       "value": "5"
     },
     {
       "filePath": "\/Users\/ishpreetsingh\/Desktop\/CustomVideoplyer\/CustomVideoplyer\/CustomVideoPlayerView.swift",
       "kind": "IntegerLiteral",
-      "offset": 4836,
+      "offset": 5210,
       "length": 1,
       "value": "1"
     },
     {
       "filePath": "\/Users\/ishpreetsingh\/Desktop\/CustomVideoplyer\/CustomVideoplyer\/CustomVideoPlayerView.swift",
       "kind": "BooleanLiteral",
-      "offset": 4877,
+      "offset": 5251,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/ishpreetsingh\/Desktop\/CustomVideoplyer\/CustomVideoplyer\/CustomVideoPlayerView.swift",
       "kind": "Array",
-      "offset": 4994,
+      "offset": 5368,
       "length": 2,
       "value": "[]"
     },
     {
       "filePath": "\/Users\/ishpreetsingh\/Desktop\/CustomVideoplyer\/CustomVideoplyer\/CustomVideoPlayerView.swift",
       "kind": "IntegerLiteral",
-      "offset": 5117,
+      "offset": 5491,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/ishpreetsingh\/Desktop\/CustomVideoplyer\/CustomVideoplyer\/CustomVideoPlayerView.swift",
       "kind": "Array",
-      "offset": 5186,
+      "offset": 5560,
       "length": 2,
       "value": "[]"
     },
     {
       "filePath": "\/Users\/ishpreetsingh\/Desktop\/CustomVideoplyer\/CustomVideoplyer\/CustomVideoPlayerView.swift",
       "kind": "Array",
-      "offset": 5257,
+      "offset": 5631,
       "length": 2,
       "value": "[]"
     },
     {
       "filePath": "\/Users\/ishpreetsingh\/Desktop\/CustomVideoplyer\/CustomVideoplyer\/CustomVideoPlayerView.swift",
       "kind": "IntegerLiteral",
-      "offset": 5360,
+      "offset": 5734,
       "length": 1,
       "value": "1"
     },
     {
       "filePath": "\/Users\/ishpreetsingh\/Desktop\/CustomVideoplyer\/CustomVideoplyer\/CustomVideoPlayerView.swift",
       "kind": "IntegerLiteral",
-      "offset": 5409,
+      "offset": 5783,
       "length": 1,
       "value": "1"
     },
     {
       "filePath": "\/Users\/ishpreetsingh\/Desktop\/CustomVideoplyer\/CustomVideoplyer\/CustomVideoPlayerView.swift",
       "kind": "IntegerLiteral",
-      "offset": 5460,
+      "offset": 5834,
       "length": 1,
       "value": "1"
     },
     {
       "filePath": "\/Users\/ishpreetsingh\/Desktop\/CustomVideoplyer\/CustomVideoplyer\/CustomVideoPlayerView.swift",
       "kind": "IntegerLiteral",
-      "offset": 5511,
+      "offset": 5885,
       "length": 1,
       "value": "3"
     },
     {
       "filePath": "\/Users\/ishpreetsingh\/Desktop\/CustomVideoplyer\/CustomVideoplyer\/CustomVideoPlayerView.swift",
       "kind": "IntegerLiteral",
-      "offset": 5636,
+      "offset": 6010,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/ishpreetsingh\/Desktop\/CustomVideoplyer\/CustomVideoplyer\/CustomVideoPlayerView.swift",
       "kind": "IntegerLiteral",
-      "offset": 5680,
+      "offset": 6054,
       "length": 1,
       "value": "4"
     },
     {
       "filePath": "\/Users\/ishpreetsingh\/Desktop\/CustomVideoplyer\/CustomVideoplyer\/CustomVideoPlayerView.swift",
       "kind": "FloatLiteral",
-      "offset": 5732,
+      "offset": 6106,
       "length": 3,
       "value": "1.5"
     },
     {
       "filePath": "\/Users\/ishpreetsingh\/Desktop\/CustomVideoplyer\/CustomVideoplyer\/CustomVideoPlayerView.swift",
       "kind": "IntegerLiteral",
-      "offset": 5936,
+      "offset": 6310,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/ishpreetsingh\/Desktop\/CustomVideoplyer\/CustomVideoplyer\/CustomVideoPlayerView.swift",
       "kind": "IntegerLiteral",
-      "offset": 5985,
+      "offset": 6359,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/ishpreetsingh\/Desktop\/CustomVideoplyer\/CustomVideoplyer\/CustomVideoPlayerView.swift",
       "kind": "IntegerLiteral",
-      "offset": 6038,
+      "offset": 6412,
       "length": 1,
       "value": "3"
     },
     {
       "filePath": "\/Users\/ishpreetsingh\/Desktop\/CustomVideoplyer\/CustomVideoplyer\/CustomVideoPlayerView.swift",
       "kind": "Array",
-      "offset": 6093,
+      "offset": 6467,
       "length": 2,
       "value": "[]"
     },
     {
       "filePath": "\/Users\/ishpreetsingh\/Desktop\/CustomVideoplyer\/CustomVideoplyer\/CustomVideoPlayerView.swift",
       "kind": "BooleanLiteral",
-      "offset": 42051,
+      "offset": 43973,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/ishpreetsingh\/Desktop\/CustomVideoplyer\/CustomVideoplyer\/CustomVideoPlayerView.swift",
       "kind": "BooleanLiteral",
-      "offset": 44473,
+      "offset": 46395,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/ishpreetsingh\/Desktop\/CustomVideoplyer\/CustomVideoplyer\/CustomVideoPlayerView.swift",
       "kind": "BooleanLiteral",
-      "offset": 50601,
+      "offset": 52615,
       "length": 5,
       "value": "false"
     }

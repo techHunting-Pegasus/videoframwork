@@ -174,6 +174,8 @@ struct ContentView: View {
                         controlTintColors: viewModel.controlTintColors,
                         liveAtEdgeColor: .systemRed,
                         liveGoLiveColor: .systemOrange,
+                        playerTitle: "kya haa chaal",
+                        playerTitleColor: .systemYellow,
                         onExpandTapped: viewModel.handleExpandTapped,
                         onStreamURLRefreshRequested: viewModel.handleStreamRefreshRequest,
                         

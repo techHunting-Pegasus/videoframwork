@@ -19,6 +19,9 @@ public struct CustomVideoPlayerSwiftUIView: UIViewRepresentable {
     private let controlTintColors: [CustomVideoPlayerControlButton: UIColor]?
     private let liveAtEdgeColor: UIColor?
     private let liveGoLiveColor: UIColor?
+    private let playerTitle: String?
+    private let playerTitleColor: UIColor?
+    private let playerTitleFont: UIFont?
     private let controlsGradientTopColor: UIColor?
     private let controlsGradientBottomColor: UIColor?
     private let onExpandTapped: (() -> Void)?
@@ -33,6 +36,9 @@ public struct CustomVideoPlayerSwiftUIView: UIViewRepresentable {
         controlTintColors: [CustomVideoPlayerControlButton: UIColor]? = nil,
         liveAtEdgeColor: UIColor? = nil,
         liveGoLiveColor: UIColor? = nil,
+        playerTitle: String? = nil,
+        playerTitleColor: UIColor? = nil,
+        playerTitleFont: UIFont? = nil,
         controlsGradientTopColor: UIColor? = nil,
         controlsGradientBottomColor: UIColor? = nil,
         onExpandTapped: (() -> Void)? = nil,
@@ -46,6 +52,9 @@ public struct CustomVideoPlayerSwiftUIView: UIViewRepresentable {
         self.controlTintColors = controlTintColors
         self.liveAtEdgeColor = liveAtEdgeColor
         self.liveGoLiveColor = liveGoLiveColor
+        self.playerTitle = playerTitle
+        self.playerTitleColor = playerTitleColor
+        self.playerTitleFont = playerTitleFont
         self.controlsGradientTopColor = controlsGradientTopColor
         self.controlsGradientBottomColor = controlsGradientBottomColor
         self.onExpandTapped = onExpandTapped
@@ -65,6 +74,9 @@ public struct CustomVideoPlayerSwiftUIView: UIViewRepresentable {
             view.setLiveStatusTitleColors(atLiveEdge: liveAtEdgeColor, goLive: liveGoLiveColor)
         }
 
+        view.setPlayerTitle(playerTitle)
+        view.setPlayerTitleTextColor(playerTitleColor)
+        view.setPlayerTitleFont(playerTitleFont)
         view.setControlsGradientColors(
             top: controlsGradientTopColor,
             bottom: controlsGradientBottomColor
