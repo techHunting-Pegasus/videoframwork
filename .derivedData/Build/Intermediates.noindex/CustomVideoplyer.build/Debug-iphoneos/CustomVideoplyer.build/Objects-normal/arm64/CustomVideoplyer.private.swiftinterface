@@ -12,7 +12,7 @@ import _StringProcessing
 import _SwiftConcurrencyShims
 @available(iOS 13.0, *)
 @_Concurrency.MainActor @preconcurrency public struct CustomVideoPlayerSwiftUIView : SwiftUI.UIViewRepresentable {
-  @_Concurrency.MainActor @preconcurrency public init(player: AVFoundation.AVPlayer, videoGravity: AVFoundation.AVLayerVideoGravity = .resizeAspect, qualityOptions: [CustomVideoplyer.CustomVideoQualityOption]? = nil, landscapeCustomButtons: [UIKit.UIButton]? = nil, controlIcons: [CustomVideoplyer.CustomVideoPlayerIconRole : UIKit.UIImage]? = nil, controlTintColors: [CustomVideoplyer.CustomVideoPlayerControlButton : UIKit.UIColor]? = nil, liveAtEdgeColor: UIKit.UIColor? = nil, liveGoLiveColor: UIKit.UIColor? = nil, playerTitle: Swift.String? = nil, playerTitleColor: UIKit.UIColor? = nil, playerTitleFont: UIKit.UIFont? = nil, controlsGradientTopColor: UIKit.UIColor? = nil, controlsGradientBottomColor: UIKit.UIColor? = nil, onExpandTapped: (() -> Swift.Void)? = nil, onStreamURLRefreshRequested: ((_ completion: @escaping (Foundation.URL?) -> Swift.Void) -> Swift.Void)? = nil)
+  @_Concurrency.MainActor @preconcurrency public init(player: AVFoundation.AVPlayer, videoGravity: AVFoundation.AVLayerVideoGravity = .resizeAspect, qualityOptions: [CustomVideoplyer.CustomVideoQualityOption]? = nil, landscapeCustomButtons: [UIKit.UIButton]? = nil, controlIcons: [CustomVideoplyer.CustomVideoPlayerIconRole : UIKit.UIImage]? = nil, controlTintColors: [CustomVideoplyer.CustomVideoPlayerControlButton : UIKit.UIColor]? = nil, liveAtEdgeColor: UIKit.UIColor? = nil, liveGoLiveColor: UIKit.UIColor? = nil, playerTitle: Swift.String? = nil, playerTitleColor: UIKit.UIColor? = nil, playerTitleFont: UIKit.UIFont? = nil, controlsGradientTopColor: UIKit.UIColor? = nil, controlsGradientBottomColor: UIKit.UIColor? = nil, onExpandTapped: (() -> Swift.Void)? = nil, onControlsVisibilityChanged: ((Swift.Bool) -> Swift.Void)? = nil, onStreamURLRefreshRequested: ((_ completion: @escaping (Foundation.URL?) -> Swift.Void) -> Swift.Void)? = nil)
   @_Concurrency.MainActor @preconcurrency public func makeUIView(context: CustomVideoplyer.CustomVideoPlayerSwiftUIView.Context) -> CustomVideoplyer.CustomVideoPlayerView
   @_Concurrency.MainActor @preconcurrency public func updateUIView(_ uiView: CustomVideoplyer.CustomVideoPlayerView, context: CustomVideoplyer.CustomVideoPlayerSwiftUIView.Context)
   @available(iOS 13.0, *)
@@ -70,6 +70,9 @@ public enum CustomVideoPlayerIconRole : Swift.CaseIterable, Swift.Hashable {
     get
   }
 }
+public protocol CustomVideoPlayerControlsVisibilityDelegate : AnyObject {
+  func customVideoPlayerView(_ playerView: CustomVideoplyer.CustomVideoPlayerView, didChangeControlsVisibility isVisible: Swift.Bool)
+}
 @objc @_hasMissingDesignatedInitializers @_Concurrency.MainActor @preconcurrency final public class CustomVideoPlayerView : UIKit.UIView, UIKit.UIGestureRecognizerDelegate {
   @_Concurrency.MainActor @preconcurrency @objc override final public class var layerClass: Swift.AnyClass {
     @objc get
@@ -87,6 +90,8 @@ public enum CustomVideoPlayerIconRole : Swift.CaseIterable, Swift.Hashable {
   }
   @_Concurrency.MainActor @preconcurrency final public var onExpandTapped: (() -> Swift.Void)?
   @_Concurrency.MainActor @preconcurrency final public var onStreamURLRefreshRequested: ((_ completion: @escaping (Foundation.URL?) -> Swift.Void) -> Swift.Void)?
+  @_Concurrency.MainActor @preconcurrency weak final public var controlsVisibilityDelegate: (any CustomVideoplyer.CustomVideoPlayerControlsVisibilityDelegate)?
+  @_Concurrency.MainActor @preconcurrency final public var onControlsVisibilityChanged: ((Swift.Bool) -> Swift.Void)?
   @_Concurrency.MainActor @preconcurrency final public var qualityOptions: [CustomVideoplyer.CustomVideoQualityOption] {
     get
     set
@@ -95,6 +100,9 @@ public enum CustomVideoPlayerIconRole : Swift.CaseIterable, Swift.Hashable {
     get
   }
   @_Concurrency.MainActor @preconcurrency final public var selectedPlaybackSpeed: Swift.Float {
+    get
+  }
+  @_Concurrency.MainActor @preconcurrency final public var isControlsContentVisible: Swift.Bool {
     get
   }
   @_Concurrency.MainActor @preconcurrency @objc override final public func layoutSubviews()

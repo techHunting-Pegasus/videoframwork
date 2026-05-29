@@ -25,6 +25,7 @@ public struct CustomVideoPlayerSwiftUIView: UIViewRepresentable {
     private let controlsGradientTopColor: UIColor?
     private let controlsGradientBottomColor: UIColor?
     private let onExpandTapped: (() -> Void)?
+    private let onControlsVisibilityChanged: ((Bool) -> Void)?
     private let onStreamURLRefreshRequested: ((_ completion: @escaping (URL?) -> Void) -> Void)?
 
     public init(
@@ -42,6 +43,7 @@ public struct CustomVideoPlayerSwiftUIView: UIViewRepresentable {
         controlsGradientTopColor: UIColor? = nil,
         controlsGradientBottomColor: UIColor? = nil,
         onExpandTapped: (() -> Void)? = nil,
+        onControlsVisibilityChanged: ((Bool) -> Void)? = nil,
         onStreamURLRefreshRequested: ((_ completion: @escaping (URL?) -> Void) -> Void)? = nil
     ) {
         self.player = player
@@ -58,6 +60,7 @@ public struct CustomVideoPlayerSwiftUIView: UIViewRepresentable {
         self.controlsGradientTopColor = controlsGradientTopColor
         self.controlsGradientBottomColor = controlsGradientBottomColor
         self.onExpandTapped = onExpandTapped
+        self.onControlsVisibilityChanged = onControlsVisibilityChanged
         self.onStreamURLRefreshRequested = onStreamURLRefreshRequested
     }
 
@@ -89,6 +92,7 @@ public struct CustomVideoPlayerSwiftUIView: UIViewRepresentable {
         view.setLandscapeCustomButtons(landscapeCustomButtons ?? [])
         applyExternalControlCustomization(to: view)
         view.onExpandTapped = onExpandTapped
+        view.onControlsVisibilityChanged = onControlsVisibilityChanged
         view.onStreamURLRefreshRequested = onStreamURLRefreshRequested
         return view
     }
@@ -100,6 +104,7 @@ public struct CustomVideoPlayerSwiftUIView: UIViewRepresentable {
         uiView.setLandscapeCustomButtons(landscapeCustomButtons ?? [])
         applyExternalControlCustomization(to: uiView)
         uiView.onExpandTapped = onExpandTapped
+        uiView.onControlsVisibilityChanged = onControlsVisibilityChanged
         uiView.onStreamURLRefreshRequested = onStreamURLRefreshRequested
     }
 }

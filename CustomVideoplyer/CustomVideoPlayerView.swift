@@ -50,6 +50,13 @@ public enum CustomVideoPlayerIconRole: CaseIterable, Hashable {
     case videoScaleAspectFill
 }
 
+public protocol CustomVideoPlayerControlsVisibilityDelegate: AnyObject {
+    func customVideoPlayerView(
+        _ playerView: CustomVideoPlayerView,
+        didChangeControlsVisibility isVisible: Bool
+    )
+}
+
 public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     public override class var layerClass: AnyClass {
         AVPlayerLayer.self
@@ -74,6 +81,8 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
 
     public var onExpandTapped: (() -> Void)?
     public var onStreamURLRefreshRequested: ((_ completion: @escaping (URL?) -> Void) -> Void)?
+    public weak var controlsVisibilityDelegate: CustomVideoPlayerControlsVisibilityDelegate?
+    public var onControlsVisibilityChanged: ((Bool) -> Void)?
 
     // If empty, qualities are fetched dynamically from the current stream.
     // If non-empty, user-provided values override dynamic options.
@@ -85,6 +94,7 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
 
     public private(set) var selectedQualityID: String = CustomVideoQualityOption.auto.id
     public private(set) var selectedPlaybackSpeed: Float = 1.0
+    public private(set) var isControlsContentVisible: Bool = true
 
     private let controlsContainer = UIView()
     private let controlsStackView = UIStackView()
@@ -1325,10 +1335,22 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     }
 
     private func setControlsContentVisible(_ visible: Bool, animated: Bool) {
+        notifyControlsVisibilityIfNeeded(visible)
         setView(controlsContainer, visible: visible, animated: animated)
         setView(centerControlsStackView, visible: visible, animated: animated)
         setView(titleLabel, visible: visible && playerTitleText != nil, animated: animated)
         setView(videoScaleButton, visible: visible && isExpandedFullscreen, animated: animated)
+    }
+
+    private func notifyControlsVisibilityIfNeeded(_ visible: Bool) {
+        guard isControlsContentVisible != visible else { return }
+        isControlsContentVisible = visible
+
+        onControlsVisibilityChanged?(visible)
+        controlsVisibilityDelegate?.customVideoPlayerView(
+            self,
+            didChangeControlsVisibility: visible
+        )
     }
 
     private func setView(_ view: UIView, visible: Bool, animated: Bool) {
