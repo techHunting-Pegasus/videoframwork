@@ -58,6 +58,68 @@ public protocol CustomVideoPlayerControlsVisibilityDelegate: AnyObject {
     )
 }
 
+public enum CustomVideoPlayerPlaybackStatus: Equatable {
+    case idle
+    case playing
+    case paused
+    case buffering
+    case ended
+    case failed
+}
+
+public struct CustomVideoPlayerTimeline: Equatable {
+    public let currentTime: TimeInterval
+    public let totalTime: TimeInterval
+    public let isLive: Bool
+    public let isAtLiveEdge: Bool
+
+    public init(
+        currentTime: TimeInterval,
+        totalTime: TimeInterval,
+        isLive: Bool,
+        isAtLiveEdge: Bool
+    ) {
+        self.currentTime = currentTime
+        self.totalTime = totalTime
+        self.isLive = isLive
+        self.isAtLiveEdge = isAtLiveEdge
+    }
+}
+
+public protocol CustomVideoPlayerPlaybackDelegate: AnyObject {
+    func customVideoPlayerView(
+        _ playerView: CustomVideoPlayerView,
+        didChangePlaybackStatus status: CustomVideoPlayerPlaybackStatus
+    )
+
+    func customVideoPlayerView(
+        _ playerView: CustomVideoPlayerView,
+        didUpdateTimeline timeline: CustomVideoPlayerTimeline
+    )
+
+    func customVideoPlayerView(
+        _ playerView: CustomVideoPlayerView,
+        didReceivePlaybackError error: Error?
+    )
+}
+
+public extension CustomVideoPlayerPlaybackDelegate {
+    func customVideoPlayerView(
+        _ playerView: CustomVideoPlayerView,
+        didChangePlaybackStatus status: CustomVideoPlayerPlaybackStatus
+    ) {}
+
+    func customVideoPlayerView(
+        _ playerView: CustomVideoPlayerView,
+        didUpdateTimeline timeline: CustomVideoPlayerTimeline
+    ) {}
+
+    func customVideoPlayerView(
+        _ playerView: CustomVideoPlayerView,
+        didReceivePlaybackError error: Error?
+    ) {}
+}
+
 public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     public override class var layerClass: AnyClass {
         AVPlayerLayer.self
@@ -84,6 +146,10 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     public var onStreamURLRefreshRequested: ((_ completion: @escaping (URL?) -> Void) -> Void)?
     public weak var controlsVisibilityDelegate: CustomVideoPlayerControlsVisibilityDelegate?
     public var onControlsVisibilityChanged: ((Bool) -> Void)?
+    public weak var playbackDelegate: CustomVideoPlayerPlaybackDelegate?
+    public var onPlaybackStatusChanged: ((CustomVideoPlayerPlaybackStatus) -> Void)?
+    public var onTimelineChanged: ((CustomVideoPlayerTimeline) -> Void)?
+    public var onPlaybackError: ((Error?) -> Void)?
 
     // If empty, qualities are fetched dynamically from the current stream.
     // If non-empty, user-provided values override dynamic options.
@@ -96,6 +162,13 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     public private(set) var selectedQualityID: String = CustomVideoQualityOption.auto.id
     public private(set) var selectedPlaybackSpeed: Float = 1.0
     public private(set) var isControlsContentVisible: Bool = true
+    public private(set) var playbackStatus: CustomVideoPlayerPlaybackStatus = .idle
+    public private(set) var timeline: CustomVideoPlayerTimeline = .init(
+        currentTime: 0,
+        totalTime: 0,
+        isLive: false,
+        isAtLiveEdge: false
+    )
 
     private let controlsContainer = UIView()
     private let controlsStackView = UIStackView()
@@ -143,6 +216,13 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     private var customControlTintColors: [CustomVideoPlayerControlButton: UIColor] = [:]
     private var liveAtEdgeTitleColor: UIColor = .systemRed
     private var liveGoLiveTitleColor: UIColor = .white
+    private let defaultSeekSliderActiveTrackColor: UIColor = .white
+    private let defaultSeekSliderInactiveTrackColor: UIColor = UIColor.white.withAlphaComponent(0.35)
+    private let defaultSeekSliderThumbColor: UIColor? = nil
+    private var seekSliderActiveTrackColor: UIColor = .white
+    private var seekSliderInactiveTrackColor: UIColor = UIColor.white.withAlphaComponent(0.35)
+    private var seekSliderThumbColor: UIColor? = nil
+    private var seekSliderThumbImage: UIImage?
     private var playerTitleText: String?
     private let defaultPlayerTitleTextColor: UIColor = .white
     private var playerTitleTextColor: UIColor = .white
@@ -174,6 +254,7 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     private var networkMonitor: NWPathMonitor?
     private let networkMonitorQueue = DispatchQueue(label: "CustomVideoPlayerView.NetworkMonitor")
     private var isNetworkReachable = true
+    private var hasPlaybackEnded = false
     private var recoveryAttempt = 0
     private var isNetworkErrorVisible = false
     private let maximumRecoveryAttempts = 4
@@ -247,6 +328,63 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
         if sourceURL.isFileURL { return false }
         let scheme = sourceURL.scheme?.lowercased()
         return scheme == "http" || scheme == "https"
+    }
+
+    private func resolvedPlaybackStatus() -> CustomVideoPlayerPlaybackStatus {
+        guard let player else { return .idle }
+
+        if isNetworkErrorVisible || player.currentItem?.status == .failed {
+            return .failed
+        }
+
+        if hasPlaybackEnded {
+            return .ended
+        }
+
+        if isBuffering() {
+            return .buffering
+        }
+
+        switch player.timeControlStatus {
+        case .playing:
+            return .playing
+        case .paused:
+            return .paused
+        case .waitingToPlayAtSpecifiedRate:
+            return .buffering
+        @unknown default:
+            return .paused
+        }
+    }
+
+    private func notifyPlaybackStatusIfNeeded() {
+        let nextStatus = resolvedPlaybackStatus()
+        guard playbackStatus != nextStatus else { return }
+
+        playbackStatus = nextStatus
+        onPlaybackStatusChanged?(nextStatus)
+        playbackDelegate?.customVideoPlayerView(self, didChangePlaybackStatus: nextStatus)
+    }
+
+    private func notifyTimelineIfNeeded(_ timeline: CustomVideoPlayerTimeline) {
+        guard self.timeline != timeline else { return }
+
+        self.timeline = timeline
+        onTimelineChanged?(timeline)
+        playbackDelegate?.customVideoPlayerView(self, didUpdateTimeline: timeline)
+    }
+
+    private func notifyPlaybackError(_ error: Error?) {
+        onPlaybackError?(error)
+        playbackDelegate?.customVideoPlayerView(self, didReceivePlaybackError: error)
+    }
+
+    private func makeNetworkUnstableError() -> NSError {
+        NSError(
+            domain: "CustomVideoPlayerView.Playback",
+            code: -1009,
+            userInfo: [NSLocalizedDescriptionKey: networkErrorMessage]
+        )
     }
 
     private func defaultControlImage(for role: CustomVideoPlayerIconRole) -> UIImage? {
@@ -350,6 +488,7 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
 
     public func setVideoURL(_ url: URL) {
         sourceURL = url
+        hasPlaybackEnded = false
         recoveryAttempt = 0
         cancelRecoveryRetry()
         cancelBufferingTimeout()
@@ -383,6 +522,7 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     }
 
     public func play() {
+        hasPlaybackEnded = false
         player?.play()
         applySelectedPlaybackSpeed()
         updatePlayPauseIcon()
@@ -397,6 +537,7 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     }
 
     public func stop() {
+        hasPlaybackEnded = false
         player?.pause()
         player?.seek(to: .zero)
         updatePlayPauseIcon()
@@ -486,6 +627,32 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
             resolvedTop.cgColor,
             resolvedBottom.cgColor
         ]
+    }
+
+    public func setSeekSliderTrackColors(active: UIColor?, inactive: UIColor?) {
+        seekSliderActiveTrackColor = active ?? defaultSeekSliderActiveTrackColor
+        seekSliderInactiveTrackColor = inactive ?? defaultSeekSliderInactiveTrackColor
+        applySeekSliderAppearance()
+    }
+
+    public func setSeekSliderThumbColor(_ color: UIColor?) {
+        seekSliderThumbColor = color ?? defaultSeekSliderThumbColor
+        applySeekSliderAppearance()
+    }
+
+    public func setSeekSliderThumbImage(_ image: UIImage?) {
+        seekSliderThumbImage = image
+        applySeekSliderAppearance()
+    }
+
+    private func applySeekSliderAppearance() {
+        seekSlider.minimumTrackTintColor = seekSliderActiveTrackColor
+        seekSlider.maximumTrackTintColor = seekSliderInactiveTrackColor
+        seekSlider.thumbTintColor = seekSliderThumbColor
+
+        seekSlider.setThumbImage(seekSliderThumbImage, for: .normal)
+        seekSlider.setThumbImage(seekSliderThumbImage, for: .highlighted)
+        seekSlider.setThumbImage(seekSliderThumbImage, for: .selected)
     }
 
     private func setupUI() {
@@ -616,11 +783,12 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
         seekSlider.minimumValue = 0
         seekSlider.maximumValue = 1
         seekSlider.value = 0
-        seekSlider.minimumTrackTintColor = .white
-        seekSlider.maximumTrackTintColor = UIColor.white.withAlphaComponent(0.35)
+        seekSlider.minimumTrackTintColor = seekSliderActiveTrackColor
+        seekSlider.maximumTrackTintColor = seekSliderInactiveTrackColor
         seekSlider.addTarget(self, action: #selector(sliderTouchDown), for: .touchDown)
         seekSlider.addTarget(self, action: #selector(sliderValueChanged), for: .valueChanged)
         seekSlider.addTarget(self, action: #selector(sliderTouchUp), for: [.touchUpInside, .touchUpOutside, .touchCancel])
+        applySeekSliderAppearance()
 
         controlsStackView.addArrangedSubview(currentTimeLabel)
         controlsStackView.addArrangedSubview(seekSlider)
@@ -750,6 +918,7 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
         }
 
         removePlayerObservers()
+        hasPlaybackEnded = false
         playerLayer.player = newPlayer
         if let assetURL = (newPlayer?.currentItem?.asset as? AVURLAsset)?.url {
             sourceURL = assetURL
@@ -814,11 +983,14 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
         }
 
         guard let item = player?.currentItem else {
+            hasPlaybackEnded = false
             playbackMode = .vod
             updateLiveControlsUI()
             updateBufferingUI()
             return
         }
+
+        hasPlaybackEnded = false
 
         if let assetURL = (item.asset as? AVURLAsset)?.url {
             sourceURL = assetURL
@@ -833,6 +1005,7 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
                 self?.refreshMenus()
                 self?.updateBufferingUI()
                 if item.status == .failed {
+                    self?.notifyPlaybackError(item.error)
                     self?.scheduleRecoveryRetry(reason: "item_failed")
                 }
             }
@@ -879,9 +1052,11 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
             object: item,
             queue: .main
         ) { [weak self] _ in
+            self?.hasPlaybackEnded = true
             self?.updatePlayPauseIcon()
             self?.syncTimeUIFromPlayer(force: true)
             self?.setControlsVisible(true, animated: false)
+            self?.notifyPlaybackStatusIfNeeded()
         }
     }
 
@@ -1298,36 +1473,56 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     private func syncTimeUIFromPlayer(force: Bool = false) {
         refreshPlaybackMode()
         let current = currentPlaybackSeconds()
+        let timelineUpdate: CustomVideoPlayerTimeline
 
         switch playbackMode {
         case .vod:
             currentTimeLabel.text = formatTime(current)
+            let clamped = min(current, currentDurationSeconds())
             if force || !isSeekingFromSlider {
-                let clamped = min(current, currentDurationSeconds())
                 seekSlider.value = Float(max(0, clamped))
             }
+            timelineUpdate = CustomVideoPlayerTimeline(
+                currentTime: max(0, clamped),
+                totalTime: currentDurationSeconds(),
+                isLive: false,
+                isAtLiveEdge: false
+            )
         case .liveNoDVR:
             currentTimeLabel.text = "LIVE"
             totalTimeLabel.text = ""
             if force || !isSeekingFromSlider {
                 seekSlider.value = 1
             }
+            timelineUpdate = CustomVideoPlayerTimeline(
+                currentTime: 0,
+                totalTime: 0,
+                isLive: true,
+                isAtLiveEdge: true
+            )
         case .liveDVR:
             let start = liveWindowStartSeconds
             let end = max(liveWindowEndSeconds, start)
             let clampedCurrent = min(max(current, start), end)
             let behindLive = max(0, end - clampedCurrent)
+            let relative = max(0, clampedCurrent - start)
             currentTimeLabel.text = formatLiveBehindLabel(behindLive)
             totalTimeLabel.text = "LIVE"
 
             if force || !isSeekingFromSlider {
-                let relative = max(0, clampedCurrent - start)
                 seekSlider.maximumValue = Float(max(end - start, 1))
                 seekSlider.value = Float(relative)
             }
+            timelineUpdate = CustomVideoPlayerTimeline(
+                currentTime: relative,
+                totalTime: max(0, end - start),
+                isLive: true,
+                isAtLiveEdge: behindLive <= liveEdgeToleranceSeconds
+            )
         }
 
         updateLiveStatusButton()
+        notifyTimelineIfNeeded(timelineUpdate)
     }
 
     private func updatePlayPauseIcon() {
@@ -1339,6 +1534,7 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
         let status = player?.timeControlStatus
 
         if status == .playing {
+            hasPlaybackEnded = false
             recoveryAttempt = 0
             cancelRecoveryRetry()
             setNetworkErrorVisible(false, animated: false)
@@ -1380,6 +1576,7 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
             setView(errorOverlayView, visible: true, animated: animated)
             cancelBufferingTimeout()
             cancelAutoHideControls()
+            notifyPlaybackStatusIfNeeded()
             return
         }
 
@@ -1399,6 +1596,8 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
             cancelBufferingTimeout()
             scheduleAutoHideControlsIfNeeded()
         }
+
+        notifyPlaybackStatusIfNeeded()
     }
 
     private func scheduleBufferingTimeoutIfNeeded() {
@@ -1491,8 +1690,10 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     }
 
     private func presentNetworkFailureState() {
+        guard !isNetworkErrorVisible else { return }
         cancelBufferingTimeout()
         cancelRecoveryRetry()
+        notifyPlaybackError(makeNetworkUnstableError())
         setNetworkErrorVisible(true, animated: true)
     }
 
@@ -1705,6 +1906,7 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
 
     private func seekBy(seconds: Double) {
         guard let player else { return }
+        hasPlaybackEnded = false
         refreshPlaybackMode()
 
         if playbackMode == .liveNoDVR {
@@ -1764,6 +1966,7 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     @objc private func sliderTouchUp() {
         guard !isNetworkErrorVisible else { return }
         guard let player else { return }
+        hasPlaybackEnded = false
 
         if playbackMode == .liveNoDVR {
             isSeekingFromSlider = false
@@ -1801,6 +2004,7 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
 
     private func seekToLiveEdge() {
         guard playbackMode == .liveDVR else { return }
+        hasPlaybackEnded = false
         let target = max(liveWindowStartSeconds, liveWindowEndSeconds - 0.5)
         player?.seek(
             to: CMTime(seconds: target, preferredTimescale: 600),

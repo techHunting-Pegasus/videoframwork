@@ -24,8 +24,15 @@ public struct CustomVideoPlayerSwiftUIView: UIViewRepresentable {
     private let playerTitleFont: UIFont?
     private let controlsGradientTopColor: UIColor?
     private let controlsGradientBottomColor: UIColor?
+    private let seekSliderActiveTrackColor: UIColor?
+    private let seekSliderInactiveTrackColor: UIColor?
+    private let seekSliderThumbColor: UIColor?
+    private let seekSliderThumbImage: UIImage?
     private let onExpandTapped: (() -> Void)?
     private let onControlsVisibilityChanged: ((Bool) -> Void)?
+    private let onPlaybackStatusChanged: ((CustomVideoPlayerPlaybackStatus) -> Void)?
+    private let onTimelineChanged: ((CustomVideoPlayerTimeline) -> Void)?
+    private let onPlaybackError: ((Error?) -> Void)?
     private let onStreamURLRefreshRequested: ((_ completion: @escaping (URL?) -> Void) -> Void)?
 
     public init(
@@ -42,8 +49,15 @@ public struct CustomVideoPlayerSwiftUIView: UIViewRepresentable {
         playerTitleFont: UIFont? = nil,
         controlsGradientTopColor: UIColor? = nil,
         controlsGradientBottomColor: UIColor? = nil,
+        seekSliderActiveTrackColor: UIColor? = nil,
+        seekSliderInactiveTrackColor: UIColor? = nil,
+        seekSliderThumbColor: UIColor? = nil,
+        seekSliderThumbImage: UIImage? = nil,
         onExpandTapped: (() -> Void)? = nil,
         onControlsVisibilityChanged: ((Bool) -> Void)? = nil,
+        onPlaybackStatusChanged: ((CustomVideoPlayerPlaybackStatus) -> Void)? = nil,
+        onTimelineChanged: ((CustomVideoPlayerTimeline) -> Void)? = nil,
+        onPlaybackError: ((Error?) -> Void)? = nil,
         onStreamURLRefreshRequested: ((_ completion: @escaping (URL?) -> Void) -> Void)? = nil
     ) {
         self.player = player
@@ -59,8 +73,15 @@ public struct CustomVideoPlayerSwiftUIView: UIViewRepresentable {
         self.playerTitleFont = playerTitleFont
         self.controlsGradientTopColor = controlsGradientTopColor
         self.controlsGradientBottomColor = controlsGradientBottomColor
+        self.seekSliderActiveTrackColor = seekSliderActiveTrackColor
+        self.seekSliderInactiveTrackColor = seekSliderInactiveTrackColor
+        self.seekSliderThumbColor = seekSliderThumbColor
+        self.seekSliderThumbImage = seekSliderThumbImage
         self.onExpandTapped = onExpandTapped
         self.onControlsVisibilityChanged = onControlsVisibilityChanged
+        self.onPlaybackStatusChanged = onPlaybackStatusChanged
+        self.onTimelineChanged = onTimelineChanged
+        self.onPlaybackError = onPlaybackError
         self.onStreamURLRefreshRequested = onStreamURLRefreshRequested
     }
 
@@ -84,6 +105,12 @@ public struct CustomVideoPlayerSwiftUIView: UIViewRepresentable {
             top: controlsGradientTopColor,
             bottom: controlsGradientBottomColor
         )
+        view.setSeekSliderTrackColors(
+            active: seekSliderActiveTrackColor,
+            inactive: seekSliderInactiveTrackColor
+        )
+        view.setSeekSliderThumbColor(seekSliderThumbColor)
+        view.setSeekSliderThumbImage(seekSliderThumbImage)
     }
 
     public func makeUIView(context: Context) -> CustomVideoPlayerView {
@@ -93,6 +120,9 @@ public struct CustomVideoPlayerSwiftUIView: UIViewRepresentable {
         applyExternalControlCustomization(to: view)
         view.onExpandTapped = onExpandTapped
         view.onControlsVisibilityChanged = onControlsVisibilityChanged
+        view.onPlaybackStatusChanged = onPlaybackStatusChanged
+        view.onTimelineChanged = onTimelineChanged
+        view.onPlaybackError = onPlaybackError
         view.onStreamURLRefreshRequested = onStreamURLRefreshRequested
         return view
     }
@@ -105,6 +135,9 @@ public struct CustomVideoPlayerSwiftUIView: UIViewRepresentable {
         applyExternalControlCustomization(to: uiView)
         uiView.onExpandTapped = onExpandTapped
         uiView.onControlsVisibilityChanged = onControlsVisibilityChanged
+        uiView.onPlaybackStatusChanged = onPlaybackStatusChanged
+        uiView.onTimelineChanged = onTimelineChanged
+        uiView.onPlaybackError = onPlaybackError
         uiView.onStreamURLRefreshRequested = onStreamURLRefreshRequested
     }
 }
