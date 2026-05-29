@@ -1,0 +1,1 @@
+@rpath/UIKItexample.debug.dylib

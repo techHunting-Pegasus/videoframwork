@@ -6,6 +6,7 @@
 //
 
 import AVFoundation
+import Network
 import UIKit
 
 public struct CustomVideoQualityOption: Equatable {
@@ -104,6 +105,10 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     private let titleLabel = UILabel()
     private let loadingStackView = UIStackView()
     private let loadingIndicator = UIActivityIndicatorView(style: .large)
+    private let errorOverlayView = UIView()
+    private let errorStackView = UIStackView()
+    private let networkErrorLabel = UILabel()
+    private let retryButton = UIButton(type: .system)
     private let controlsGradientLayer = CAGradientLayer()
 
     private let backwardButton = UIButton(type: .system)
@@ -165,9 +170,16 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     private let maximumVideoZoomScale: CGFloat = 3
     private var sourceURL: URL?
     private var recoveryRetryWorkItem: DispatchWorkItem?
+    private var bufferingTimeoutWorkItem: DispatchWorkItem?
+    private var networkMonitor: NWPathMonitor?
+    private let networkMonitorQueue = DispatchQueue(label: "CustomVideoPlayerView.NetworkMonitor")
+    private var isNetworkReachable = true
     private var recoveryAttempt = 0
+    private var isNetworkErrorVisible = false
     private let maximumRecoveryAttempts = 4
     private let recoveryBaseDelay: TimeInterval = 1.5
+    private let bufferingFailureTimeout: TimeInterval = 20
+    private let networkErrorMessage = "Network is unstable"
 
     private enum PlaybackMode {
         case vod
@@ -198,6 +210,43 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
         } else {
             DispatchQueue.main.async(execute: work)
         }
+    }
+
+    private func startNetworkMonitoring() {
+        guard networkMonitor == nil else { return }
+
+        let monitor = NWPathMonitor()
+        networkMonitor = monitor
+
+        monitor.pathUpdateHandler = { [weak self] path in
+            self?.runOnMain { [weak self] in
+                self?.handleNetworkReachabilityChange(isReachable: path.status == .satisfied)
+            }
+        }
+        monitor.start(queue: networkMonitorQueue)
+    }
+
+    private func stopNetworkMonitoring() {
+        networkMonitor?.cancel()
+        networkMonitor = nil
+    }
+
+    private func handleNetworkReachabilityChange(isReachable: Bool) {
+        isNetworkReachable = isReachable
+        guard !isReachable else { return }
+        guard isRemoteStreamSource() else { return }
+        guard !isNetworkErrorVisible else { return }
+
+        if isBuffering() {
+            presentNetworkFailureState()
+        }
+    }
+
+    private func isRemoteStreamSource() -> Bool {
+        guard let sourceURL else { return false }
+        if sourceURL.isFileURL { return false }
+        let scheme = sourceURL.scheme?.lowercased()
+        return scheme == "http" || scheme == "https"
     }
 
     private func defaultControlImage(for role: CustomVideoPlayerIconRole) -> UIImage? {
@@ -277,6 +326,7 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     ) {
         super.init(frame: .zero)
         setupUI()
+        startNetworkMonitoring()
         self.videoGravity = videoGravity
         setPlayer(player)
         updatePlayPauseIcon()
@@ -286,6 +336,8 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
 
     deinit {
         restoreNavigationBarIfNeeded()
+        stopNetworkMonitoring()
+        cancelBufferingTimeout()
         cancelRecoveryRetry()
         cancelAutoHideControls()
         removePlayerObservers()
@@ -300,6 +352,8 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
         sourceURL = url
         recoveryAttempt = 0
         cancelRecoveryRetry()
+        cancelBufferingTimeout()
+        setNetworkErrorVisible(false, animated: false)
 
         let item = AVPlayerItem(url: url)
 
@@ -503,6 +557,38 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
         videoScaleButton.alpha = 0
         addSubview(videoScaleButton)
 
+        errorOverlayView.translatesAutoresizingMaskIntoConstraints = false
+        errorOverlayView.backgroundColor = .black
+        errorOverlayView.isHidden = true
+        errorOverlayView.alpha = 0
+        errorOverlayView.isUserInteractionEnabled = false
+        addSubview(errorOverlayView)
+
+        errorStackView.translatesAutoresizingMaskIntoConstraints = false
+        errorStackView.axis = .vertical
+        errorStackView.alignment = .center
+        errorStackView.spacing = 12
+
+        networkErrorLabel.translatesAutoresizingMaskIntoConstraints = false
+        networkErrorLabel.textColor = .white
+        networkErrorLabel.font = .systemFont(ofSize: 16, weight: .semibold)
+        networkErrorLabel.textAlignment = .center
+        networkErrorLabel.numberOfLines = 2
+        networkErrorLabel.text = networkErrorMessage
+
+        retryButton.translatesAutoresizingMaskIntoConstraints = false
+        retryButton.setTitle("Retry", for: .normal)
+        retryButton.setTitleColor(.white, for: .normal)
+        retryButton.titleLabel?.font = .systemFont(ofSize: 15, weight: .semibold)
+        retryButton.layer.cornerRadius = 6
+        retryButton.layer.borderWidth = 1
+        retryButton.layer.borderColor = UIColor.white.cgColor
+        retryButton.contentEdgeInsets = UIEdgeInsets(top: 8, left: 20, bottom: 8, right: 20)
+
+        errorStackView.addArrangedSubview(networkErrorLabel)
+        errorStackView.addArrangedSubview(retryButton)
+        errorOverlayView.addSubview(errorStackView)
+
         styleLiveStatusButton(liveStatusButton)
         liveStatusButton.isHidden = true
         secondaryStackView.addArrangedSubview(liveStatusButton)
@@ -567,7 +653,17 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
             loadingStackView.centerYAnchor.constraint(equalTo: centerYAnchor),
 
             videoScaleButton.topAnchor.constraint(equalTo: safeGuide.topAnchor, constant: 12),
-            videoScaleButton.trailingAnchor.constraint(equalTo: safeGuide.trailingAnchor, constant: -12)
+            videoScaleButton.trailingAnchor.constraint(equalTo: safeGuide.trailingAnchor, constant: -12),
+
+            errorOverlayView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            errorOverlayView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            errorOverlayView.topAnchor.constraint(equalTo: topAnchor),
+            errorOverlayView.bottomAnchor.constraint(equalTo: bottomAnchor),
+
+            errorStackView.centerXAnchor.constraint(equalTo: errorOverlayView.centerXAnchor),
+            errorStackView.centerYAnchor.constraint(equalTo: errorOverlayView.centerYAnchor),
+            errorStackView.leadingAnchor.constraint(greaterThanOrEqualTo: errorOverlayView.leadingAnchor, constant: 20),
+            errorStackView.trailingAnchor.constraint(lessThanOrEqualTo: errorOverlayView.trailingAnchor, constant: -20)
         ])
 
         applyControlIcons()
@@ -579,6 +675,7 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
         liveStatusButton.addTarget(self, action: #selector(didTapLiveStatus), for: .touchUpInside)
         expandButton.addTarget(self, action: #selector(didTapExpand), for: .touchUpInside)
         videoScaleButton.addTarget(self, action: #selector(didTapVideoScale), for: .touchUpInside)
+        retryButton.addTarget(self, action: #selector(didTapRetryAfterError), for: .touchUpInside)
 
         ccButton.showsMenuAsPrimaryAction = true
         settingsButton.showsMenuAsPrimaryAction = true
@@ -790,6 +887,7 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
 
     private func removePlayerObservers() {
         cancelAutoHideControls()
+        cancelBufferingTimeout()
 
         if let timeObserver, let player {
             player.removeTimeObserver(timeObserver)
@@ -1243,6 +1341,7 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
         if status == .playing {
             recoveryAttempt = 0
             cancelRecoveryRetry()
+            setNetworkErrorVisible(false, animated: false)
             scheduleAutoHideControlsIfNeeded()
         } else if status == .paused {
             isControlsVisible = true
@@ -1274,6 +1373,17 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     }
 
     private func updateBufferingUI(animated: Bool = false) {
+        if isNetworkErrorVisible {
+            loadingStackView.isHidden = true
+            loadingIndicator.stopAnimating()
+            setControlsContentVisible(false, animated: animated)
+            setView(errorOverlayView, visible: true, animated: animated)
+            cancelBufferingTimeout()
+            cancelAutoHideControls()
+            return
+        }
+
+        setView(errorOverlayView, visible: false, animated: animated)
         let buffering = isBuffering()
         let shouldShowControls = !buffering && isControlsVisible
 
@@ -1282,16 +1392,64 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
 
         if buffering {
             loadingIndicator.startAnimating()
+            scheduleBufferingTimeoutIfNeeded()
             cancelAutoHideControls()
         } else {
             loadingIndicator.stopAnimating()
+            cancelBufferingTimeout()
             scheduleAutoHideControlsIfNeeded()
         }
     }
 
+    private func scheduleBufferingTimeoutIfNeeded() {
+        guard !isNetworkErrorVisible else {
+            cancelBufferingTimeout()
+            return
+        }
+        guard isRemoteStreamSource(), isBuffering() else {
+            cancelBufferingTimeout()
+            return
+        }
+        guard bufferingTimeoutWorkItem == nil else { return }
+
+        let workItem = DispatchWorkItem { [weak self] in
+            guard let self else { return }
+            self.bufferingTimeoutWorkItem = nil
+
+            guard !self.isNetworkErrorVisible, self.isBuffering() else { return }
+
+            if !self.isNetworkReachable {
+                self.presentNetworkFailureState()
+                return
+            }
+
+            self.scheduleRecoveryRetry(reason: "buffering_timeout")
+            if self.recoveryAttempt >= self.maximumRecoveryAttempts {
+                self.presentNetworkFailureState()
+            }
+        }
+
+        bufferingTimeoutWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + bufferingFailureTimeout, execute: workItem)
+    }
+
+    private func cancelBufferingTimeout() {
+        bufferingTimeoutWorkItem?.cancel()
+        bufferingTimeoutWorkItem = nil
+    }
+
     private func scheduleRecoveryRetry(reason _: String) {
-        guard recoveryAttempt < maximumRecoveryAttempts else { return }
-        guard sourceURL != nil || onStreamURLRefreshRequested != nil else { return }
+        guard !isNetworkErrorVisible else { return }
+
+        guard sourceURL != nil || onStreamURLRefreshRequested != nil else {
+            presentNetworkFailureState()
+            return
+        }
+
+        guard recoveryAttempt < maximumRecoveryAttempts else {
+            presentNetworkFailureState()
+            return
+        }
 
         recoveryAttempt += 1
         let delay = recoveryBaseDelay * pow(2, Double(recoveryAttempt - 1))
@@ -1319,7 +1477,10 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     }
 
     private func reloadPlayerSource(with url: URL?) {
-        guard let url else { return }
+        guard let url else {
+            presentNetworkFailureState()
+            return
+        }
         setVideoURL(url)
         play()
     }
@@ -1327,6 +1488,19 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     private func cancelRecoveryRetry() {
         recoveryRetryWorkItem?.cancel()
         recoveryRetryWorkItem = nil
+    }
+
+    private func presentNetworkFailureState() {
+        cancelBufferingTimeout()
+        cancelRecoveryRetry()
+        setNetworkErrorVisible(true, animated: true)
+    }
+
+    private func setNetworkErrorVisible(_ visible: Bool, animated: Bool) {
+        guard isNetworkErrorVisible != visible else { return }
+        isNetworkErrorVisible = visible
+        errorOverlayView.isUserInteractionEnabled = visible
+        updateBufferingUI(animated: animated)
     }
 
     private func setControlsVisible(_ visible: Bool, animated: Bool) {
@@ -1415,12 +1589,12 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     }
 
     @objc private func didTapPlayerSurface() {
-        guard !isBuffering() else { return }
+        guard !isNetworkErrorVisible, !isBuffering() else { return }
         setControlsVisible(!isControlsVisible, animated: true)
     }
 
     @objc private func didPanPlayerSurface(_ gesture: UIPanGestureRecognizer) {
-        guard !isBuffering() else { return }
+        guard !isNetworkErrorVisible, !isBuffering() else { return }
 
         switch gesture.state {
         case .began:
@@ -1458,7 +1632,7 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     }
 
     @objc private func didPinchPlayerSurface(_ gesture: UIPinchGestureRecognizer) {
-        guard !isBuffering(), isExpandedFullscreen else { return }
+        guard !isNetworkErrorVisible, !isBuffering(), isExpandedFullscreen else { return }
 
         switch gesture.state {
         case .began:
@@ -1505,6 +1679,7 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     }
 
     @objc private func didTapPlayPause() {
+        guard !isNetworkErrorVisible else { return }
         guard let player else { return }
         setControlsVisible(true, animated: false)
         if player.timeControlStatus == .playing {
@@ -1515,12 +1690,14 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     }
 
     @objc private func didTapBackward() {
+        guard !isNetworkErrorVisible else { return }
         setControlsVisible(true, animated: false)
         seekBy(seconds: -10)
         scheduleAutoHideControlsIfNeeded()
     }
 
     @objc private func didTapForward() {
+        guard !isNetworkErrorVisible else { return }
         setControlsVisible(true, animated: false)
         seekBy(seconds: 10)
         scheduleAutoHideControlsIfNeeded()
@@ -1566,6 +1743,7 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     }
 
     @objc private func sliderTouchDown() {
+        guard !isNetworkErrorVisible else { return }
         if playbackMode == .liveNoDVR { return }
         isSeekingFromSlider = true
         setControlsVisible(true, animated: false)
@@ -1573,6 +1751,7 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     }
 
     @objc private func sliderValueChanged() {
+        guard !isNetworkErrorVisible else { return }
         if playbackMode == .liveDVR {
             let target = liveWindowStartSeconds + Double(seekSlider.value)
             let behindLive = max(0, liveWindowEndSeconds - target)
@@ -1583,6 +1762,7 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     }
 
     @objc private func sliderTouchUp() {
+        guard !isNetworkErrorVisible else { return }
         guard let player else { return }
 
         if playbackMode == .liveNoDVR {
@@ -1608,11 +1788,13 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     }
 
     @objc private func didTapExpand() {
+        guard !isNetworkErrorVisible else { return }
         toggleLandscapeMode()
         onExpandTapped?()
     }
 
     @objc private func didTapLiveStatus() {
+        guard !isNetworkErrorVisible else { return }
         guard playbackMode == .liveDVR else { return }
         seekToLiveEdge()
     }
@@ -1631,10 +1813,18 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     }
 
     @objc private func didTapVideoScale() {
+        guard !isNetworkErrorVisible else { return }
         let nextGravity: AVLayerVideoGravity = (videoGravity == .resizeAspectFill) ? .resizeAspect : .resizeAspectFill
         videoGravity = nextGravity
         setControlsVisible(true, animated: false)
         scheduleAutoHideControlsIfNeeded()
+    }
+
+    @objc private func didTapRetryAfterError() {
+        guard isNetworkErrorVisible else { return }
+        recoveryAttempt = 0
+        setNetworkErrorVisible(false, animated: false)
+        performRecoveryRetry()
     }
 
     private func toggleLandscapeMode() {
