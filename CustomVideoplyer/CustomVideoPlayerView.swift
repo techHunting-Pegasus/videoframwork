@@ -127,6 +127,8 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     private var customControlTintColors: [CustomVideoPlayerControlButton: UIColor] = [:]
     private var liveAtEdgeTitleColor: UIColor = .systemRed
     private var liveGoLiveTitleColor: UIColor = .white
+    private let defaultControlsGradientTopColor: UIColor = .clear
+    private let defaultControlsGradientBottomColor: UIColor = UIColor.black.withAlphaComponent(0.88)
     private var controlsAutoHideWorkItem: DispatchWorkItem?
     private var isControlsVisible = true
     private let controlsAutoHideDelay: TimeInterval = 5
@@ -136,6 +138,8 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     private var isExpandedFullscreen = false
     private weak var fullscreenHostView: UIView?
     private var fullscreenConstraints: [NSLayoutConstraint] = []
+    private weak var originalSuperviewForFullscreen: UIView?
+    private var originalSuperviewIndexForFullscreen: Int = 0
     private var storedSuperviewConstraints: [NSLayoutConstraint] = []
     private var storedSelfSizingConstraints: [NSLayoutConstraint] = []
     private var previousNavigationBarHidden: Bool?
@@ -384,15 +388,21 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
         updateLiveStatusButton()
     }
 
+    public func setControlsGradientColors(top: UIColor?, bottom: UIColor?) {
+        let resolvedTop = top ?? defaultControlsGradientTopColor
+        let resolvedBottom = bottom ?? defaultControlsGradientBottomColor
+        controlsGradientLayer.colors = [
+            resolvedTop.cgColor,
+            resolvedBottom.cgColor
+        ]
+    }
+
     private func setupUI() {
         backgroundColor = .black
 
         controlsContainer.translatesAutoresizingMaskIntoConstraints = false
         controlsContainer.backgroundColor = .clear
-        controlsGradientLayer.colors = [
-            UIColor.clear.cgColor,
-            UIColor.black.withAlphaComponent(0.88).cgColor
-        ]
+        setControlsGradientColors(top: nil, bottom: nil)
         controlsGradientLayer.locations = [0, 1]
         controlsGradientLayer.startPoint = CGPoint(x: 0.5, y: 0)
         controlsGradientLayer.endPoint = CGPoint(x: 0.5, y: 1)
@@ -1572,18 +1582,29 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
     }
 
     private func enterFullscreenLandscape() {
-        guard let hostView = superview else {
+        guard let currentSuperview = superview else {
             isExpandedFullscreen = true
             applyVideoZoomScale(minimumVideoZoomScale)
             requestInterfaceOrientation(.landscapeRight)
             return
         }
 
-        fullscreenHostView = hostView
-        storedSuperviewConstraints = constraintsForFullscreenExpansion(in: hostView)
+        originalSuperviewForFullscreen = currentSuperview
+        originalSuperviewIndexForFullscreen = currentSuperview.subviews.firstIndex(of: self) ?? currentSuperview.subviews.count
+
+        storedSuperviewConstraints = constraintsForFullscreenExpansion(in: currentSuperview)
         storedSelfSizingConstraints = selfSizingConstraintsForFullscreen()
         NSLayoutConstraint.deactivate(storedSuperviewConstraints + storedSelfSizingConstraints)
 
+        let hostView = fullscreenPresentationHostView(fallback: currentSuperview)
+        fullscreenHostView = hostView
+
+        if hostView !== currentSuperview {
+            removeFromSuperview()
+            hostView.addSubview(self)
+        }
+
+        translatesAutoresizingMaskIntoConstraints = false
         fullscreenConstraints = [
             leadingAnchor.constraint(equalTo: hostView.leadingAnchor),
             trailingAnchor.constraint(equalTo: hostView.trailingAnchor),
@@ -1597,6 +1618,7 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
         if let navigationController = nearestViewController()?.navigationController {
             previousNavigationBarHidden = navigationController.isNavigationBarHidden
             navigationController.setNavigationBarHidden(true, animated: false)
+            navigationController.view.layoutIfNeeded()
         }
 
         isExpandedFullscreen = true
@@ -1610,9 +1632,22 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
         NSLayoutConstraint.deactivate(fullscreenConstraints)
         fullscreenConstraints.removeAll()
 
+        if
+            let originalSuperview = originalSuperviewForFullscreen,
+            superview !== originalSuperview
+        {
+            removeFromSuperview()
+            let insertIndex = min(max(0, originalSuperviewIndexForFullscreen), originalSuperview.subviews.count)
+            originalSuperview.insertSubview(self, at: insertIndex)
+        }
+
         NSLayoutConstraint.activate(storedSuperviewConstraints + storedSelfSizingConstraints)
         storedSuperviewConstraints.removeAll()
         storedSelfSizingConstraints.removeAll()
+
+        originalSuperviewForFullscreen?.layoutIfNeeded()
+        originalSuperviewForFullscreen = nil
+        originalSuperviewIndexForFullscreen = 0
 
         fullscreenHostView?.layoutIfNeeded()
         fullscreenHostView = nil
@@ -1624,6 +1659,19 @@ public final class CustomVideoPlayerView: UIView, UIGestureRecognizerDelegate {
         updateLandscapeCustomButtonsVisibility()
         updateBufferingUI()
         requestInterfaceOrientation(.portrait)
+    }
+
+    private func fullscreenPresentationHostView(fallback: UIView) -> UIView {
+        if let navigationView = nearestViewController()?.navigationController?.view {
+            return navigationView
+        }
+        if let viewControllerView = nearestViewController()?.view {
+            return viewControllerView
+        }
+        if let window {
+            return window
+        }
+        return fallback
     }
 
     private func constraintsForFullscreenExpansion(in hostView: UIView) -> [NSLayoutConstraint] {

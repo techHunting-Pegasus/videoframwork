@@ -175,7 +175,8 @@ struct ContentView: View {
                         liveAtEdgeColor: .systemRed,
                         liveGoLiveColor: .systemOrange,
                         onExpandTapped: viewModel.handleExpandTapped,
-                        onStreamURLRefreshRequested: viewModel.handleStreamRefreshRequest
+                        onStreamURLRefreshRequested: viewModel.handleStreamRefreshRequest,
+                        
                     )
                     .frame(maxWidth: .infinity)
                     .aspectRatio(16.0 / 9.0, contentMode: .fit)

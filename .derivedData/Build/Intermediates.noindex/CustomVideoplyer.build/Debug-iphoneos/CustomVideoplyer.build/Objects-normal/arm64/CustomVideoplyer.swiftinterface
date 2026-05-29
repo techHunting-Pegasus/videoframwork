@@ -12,7 +12,7 @@ import _StringProcessing
 import _SwiftConcurrencyShims
 @available(iOS 13.0, *)
 @_Concurrency.MainActor @preconcurrency public struct CustomVideoPlayerSwiftUIView : SwiftUI.UIViewRepresentable {
-  @_Concurrency.MainActor @preconcurrency public init(player: AVFoundation.AVPlayer, videoGravity: AVFoundation.AVLayerVideoGravity = .resizeAspect, qualityOptions: [CustomVideoplyer.CustomVideoQualityOption]? = nil, landscapeCustomButtons: [UIKit.UIButton]? = nil, controlIcons: [CustomVideoplyer.CustomVideoPlayerIconRole : UIKit.UIImage]? = nil, controlTintColors: [CustomVideoplyer.CustomVideoPlayerControlButton : UIKit.UIColor]? = nil, liveAtEdgeColor: UIKit.UIColor? = nil, liveGoLiveColor: UIKit.UIColor? = nil, onExpandTapped: (() -> Swift.Void)? = nil, onStreamURLRefreshRequested: ((_ completion: @escaping (Foundation.URL?) -> Swift.Void) -> Swift.Void)? = nil)
+  @_Concurrency.MainActor @preconcurrency public init(player: AVFoundation.AVPlayer, videoGravity: AVFoundation.AVLayerVideoGravity = .resizeAspect, qualityOptions: [CustomVideoplyer.CustomVideoQualityOption]? = nil, landscapeCustomButtons: [UIKit.UIButton]? = nil, controlIcons: [CustomVideoplyer.CustomVideoPlayerIconRole : UIKit.UIImage]? = nil, controlTintColors: [CustomVideoplyer.CustomVideoPlayerControlButton : UIKit.UIColor]? = nil, liveAtEdgeColor: UIKit.UIColor? = nil, liveGoLiveColor: UIKit.UIColor? = nil, controlsGradientTopColor: UIKit.UIColor? = nil, controlsGradientBottomColor: UIKit.UIColor? = nil, onExpandTapped: (() -> Swift.Void)? = nil, onStreamURLRefreshRequested: ((_ completion: @escaping (Foundation.URL?) -> Swift.Void) -> Swift.Void)? = nil)
   @_Concurrency.MainActor @preconcurrency public func makeUIView(context: CustomVideoplyer.CustomVideoPlayerSwiftUIView.Context) -> CustomVideoplyer.CustomVideoPlayerView
   @_Concurrency.MainActor @preconcurrency public func updateUIView(_ uiView: CustomVideoplyer.CustomVideoPlayerView, context: CustomVideoplyer.CustomVideoPlayerSwiftUIView.Context)
   @available(iOS 13.0, *)
@@ -111,6 +111,7 @@ public enum CustomVideoPlayerIconRole : Swift.CaseIterable, Swift.Hashable {
   @_Concurrency.MainActor @preconcurrency final public func setControlImage(_ image: UIKit.UIImage?, for role: CustomVideoplyer.CustomVideoPlayerIconRole)
   @_Concurrency.MainActor @preconcurrency final public func setControlTintColor(_ color: UIKit.UIColor?, for button: CustomVideoplyer.CustomVideoPlayerControlButton)
   @_Concurrency.MainActor @preconcurrency final public func setLiveStatusTitleColors(atLiveEdge: UIKit.UIColor, goLive: UIKit.UIColor)
+  @_Concurrency.MainActor @preconcurrency final public func setControlsGradientColors(top: UIKit.UIColor?, bottom: UIKit.UIColor?)
   @_Concurrency.MainActor @preconcurrency @objc final public func gestureRecognizer(_ gestureRecognizer: UIKit.UIGestureRecognizer, shouldReceive touch: UIKit.UITouch) -> Swift.Bool
 }
 @available(iOS 13.0, *)

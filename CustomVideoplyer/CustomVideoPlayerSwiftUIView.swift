@@ -19,6 +19,8 @@ public struct CustomVideoPlayerSwiftUIView: UIViewRepresentable {
     private let controlTintColors: [CustomVideoPlayerControlButton: UIColor]?
     private let liveAtEdgeColor: UIColor?
     private let liveGoLiveColor: UIColor?
+    private let controlsGradientTopColor: UIColor?
+    private let controlsGradientBottomColor: UIColor?
     private let onExpandTapped: (() -> Void)?
     private let onStreamURLRefreshRequested: ((_ completion: @escaping (URL?) -> Void) -> Void)?
 
@@ -31,6 +33,8 @@ public struct CustomVideoPlayerSwiftUIView: UIViewRepresentable {
         controlTintColors: [CustomVideoPlayerControlButton: UIColor]? = nil,
         liveAtEdgeColor: UIColor? = nil,
         liveGoLiveColor: UIColor? = nil,
+        controlsGradientTopColor: UIColor? = nil,
+        controlsGradientBottomColor: UIColor? = nil,
         onExpandTapped: (() -> Void)? = nil,
         onStreamURLRefreshRequested: ((_ completion: @escaping (URL?) -> Void) -> Void)? = nil
     ) {
@@ -42,6 +46,8 @@ public struct CustomVideoPlayerSwiftUIView: UIViewRepresentable {
         self.controlTintColors = controlTintColors
         self.liveAtEdgeColor = liveAtEdgeColor
         self.liveGoLiveColor = liveGoLiveColor
+        self.controlsGradientTopColor = controlsGradientTopColor
+        self.controlsGradientBottomColor = controlsGradientBottomColor
         self.onExpandTapped = onExpandTapped
         self.onStreamURLRefreshRequested = onStreamURLRefreshRequested
     }
@@ -58,6 +64,11 @@ public struct CustomVideoPlayerSwiftUIView: UIViewRepresentable {
         if let liveAtEdgeColor, let liveGoLiveColor {
             view.setLiveStatusTitleColors(atLiveEdge: liveAtEdgeColor, goLive: liveGoLiveColor)
         }
+
+        view.setControlsGradientColors(
+            top: controlsGradientTopColor,
+            bottom: controlsGradientBottomColor
+        )
     }
 
     public func makeUIView(context: Context) -> CustomVideoPlayerView {
